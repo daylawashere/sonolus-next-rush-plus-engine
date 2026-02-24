@@ -144,7 +144,6 @@ def get_connector_z(kind: ConnectorKind, target_time: float, lane: float, active
                     lane=lane,
                     etc=get_active_connector_z_offset(kind, active),
                     invert_time=True,
-                    symmetrical_lane=True,
                 )
             else:
                 return get_z(
@@ -153,7 +152,6 @@ def get_connector_z(kind: ConnectorKind, target_time: float, lane: float, active
                     lane=lane,
                     etc=get_active_connector_z_offset(kind, active),
                     invert_time=True,
-                    symmetrical_lane=True,
                 )
         case (
             ConnectorKind.GUIDE_NEUTRAL
@@ -172,7 +170,6 @@ def get_connector_z(kind: ConnectorKind, target_time: float, lane: float, active
                     lane=lane,
                     etc=kind - ConnectorKind.GUIDE_NEUTRAL,
                     invert_time=True,
-                    symmetrical_lane=True,
                 )
             else:
                 return get_z(
@@ -181,7 +178,6 @@ def get_connector_z(kind: ConnectorKind, target_time: float, lane: float, active
                     lane=lane,
                     etc=kind - ConnectorKind.GUIDE_NEUTRAL,
                     invert_time=True,
-                    symmetrical_lane=True,
                 )
         case ConnectorKind.NONE:
             return 0.0
