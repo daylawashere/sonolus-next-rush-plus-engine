@@ -7,7 +7,7 @@ from sonolus.script.globals import level_data
 from sonolus.script.interval import clamp, lerp, remap, unlerp
 from sonolus.script.num import Num
 from sonolus.script.quad import Quad, QuadLike, Rect
-from sonolus.script.runtime import aspect_ratio, runtime_ui, screen
+from sonolus.script.runtime import aspect_ratio, runtime_ui, safe_area, screen
 from sonolus.script.values import swap
 from sonolus.script.vec import Vec2
 
@@ -356,17 +356,17 @@ def layout_custom_tag() -> Quad:
 def init_ui_margin():
     match LevelConfig.ui_version:
         case SekaiVersion.v3:
-            UIMargin.life_bar_x = 0.28 if not Options.full_screen_ui else 0.05
-            UIMargin.score_bar_x = 0.3 if not Options.full_screen_ui else 0.1
+            UIMargin.life_bar_x = 0.28 if screen() != safe_area() else 0.05
+            UIMargin.score_bar_x = 0.3 if screen() != safe_area() else 0.1
             UIMargin.life_bar_y = 0.887
             UIMargin.score_bar_y = 0.865
-            UIMargin.ui_x = 0.23 if not Options.full_screen_ui else 0.0
+            UIMargin.ui_x = 0.23 if screen() != safe_area() else 0.0
         case SekaiVersion.v1:
-            UIMargin.life_bar_x = 0.28 if not Options.full_screen_ui else 0.0
-            UIMargin.score_bar_x = 0.3 if not Options.full_screen_ui else 0.05
+            UIMargin.life_bar_x = 0.28 if screen() != safe_area() else 0.0
+            UIMargin.score_bar_x = 0.3 if screen() != safe_area() else 0.05
             UIMargin.life_bar_y = 0.84
             UIMargin.score_bar_y = 0.83
-            UIMargin.ui_x = 0.28 if not Options.full_screen_ui else 0.0
+            UIMargin.ui_x = 0.28 if screen() != safe_area() else 0.0
 
 
 def layout_life_bar() -> Quad:
@@ -1076,7 +1076,7 @@ def layout_fever_text() -> Quad:
     return transform_quad(rect)
 
 
-def layout_fever_border() -> Quad:
+def layout_fever_border() -> Rect:
     return Rect(t=1, b=-1, l=screen().l, r=screen().r)
 
 
