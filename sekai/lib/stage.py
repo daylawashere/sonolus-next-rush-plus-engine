@@ -56,7 +56,7 @@ def draw_stage_and_accessories(
     note_score,
     note_time,
     percentage,
-    life=1000,
+    life=1000.0,
     last_time=1e8,
 ):
     draw_stage(z_stage_lane, z_stage_cover, z_stage, z_judgment_line)
