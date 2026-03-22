@@ -85,8 +85,10 @@ class WatchConnector(WatchArchetype):
         update_timescale_group(self.tail.timescale_group)
         update_timescale_group(self.segment_head.timescale_group)
 
-        if self.active_head_ref.index > 0 and time() in self.visual_active_interval:
-            visual_lane, visual_size = self.get_attached_params(time())
+        current_time = time()
+
+        if self.active_head_ref.index > 0 and current_time in self.visual_active_interval:
+            visual_lane, visual_size = self.get_attached_params(current_time)
             self.active_connector_info.visual_lane = visual_lane
             self.active_connector_info.visual_size = visual_size
             self.active_connector_info.connector_kind = self.kind
@@ -94,15 +96,16 @@ class WatchConnector(WatchArchetype):
             self.active_connector_info.connector_kind = ConnectorKind.NONE
 
     def update_parallel(self):
-        if time() < self.visual_active_interval.end:
+        current_time = time()
+        if current_time < self.visual_active_interval.end:
             head = self.head
             tail = self.tail
             segment_head = self.segment_head
             segment_tail = self.segment_tail
             if self.active_head_ref.index > 0:
                 if is_replay():
-                    visual_state = Streams.connector_visual_states[self.index].get_previous_inclusive(time())
-                elif time() < self.active_head.target_time:
+                    visual_state = Streams.connector_visual_states[self.index].get_previous_inclusive(current_time)
+                elif current_time < self.active_head.target_time:
                     visual_state = ConnectorVisualState.WAITING
                 else:
                     visual_state = ConnectorVisualState.ACTIVE
@@ -110,7 +113,7 @@ class WatchConnector(WatchArchetype):
                 visual_state = ConnectorVisualState.WAITING
             if group_hide_notes(segment_head.timescale_group):
                 return
-            if self.active_tail_ref.index > 0 and time() >= self.active_tail.despawn_time():
+            if self.active_tail_ref.index > 0 and current_time >= self.active_tail.despawn_time():
                 return
             if time() >= head.target_time:
                 head_progress = 1.0
@@ -290,11 +293,12 @@ class WatchSlideManager(WatchArchetype):
         if is_skip():
             destroy_looped_particle(self.circular_particle)
             destroy_looped_particle(self.linear_particle)
-        if time() < self.active_head.target_time:
+        current_time = time()
+        if current_time < self.active_head.target_time:
             return
         info = self.active_head.active_connector_info
         connector_kind = (
-            Streams.connector_effect_kinds[self.active_head.index].get_previous_inclusive(time())
+            Streams.connector_effect_kinds[self.active_head.index].get_previous_inclusive(current_time)
             if is_replay()
             else info.connector_kind
         )
@@ -320,17 +324,17 @@ class WatchSlideManager(WatchArchetype):
                     replace,
                 )
                 trail_period = CONNECTOR_TRAIL_SPAWN_PERIOD / Options.effect_animation_speed
-                if time() >= self.next_trail_spawn_time:
+                if current_time >= self.next_trail_spawn_time:
                     self.next_trail_spawn_time = max(
                         self.next_trail_spawn_time + trail_period,
-                        time() + trail_period / 2,
+                        current_time + trail_period / 2,
                     )
                     spawn_linear_connector_trail_particle(connector_kind, info.visual_lane)
                 slot_period = CONNECTOR_SLOT_SPAWN_PERIOD / Options.effect_animation_speed
-                if time() >= self.next_slot_spawn_time:
+                if current_time >= self.next_slot_spawn_time:
                     self.next_slot_spawn_time = max(
                         self.next_slot_spawn_time + slot_period,
-                        time() + slot_period / 2,
+                        current_time + slot_period / 2,
                     )
                     spawn_connector_slot_particles(connector_kind, info.visual_lane, info.visual_size)
                 draw_connector_slot_glow_effect(
@@ -340,7 +344,7 @@ class WatchSlideManager(WatchArchetype):
                 destroy_looped_particle(self.circular_particle)
                 destroy_looped_particle(self.linear_particle)
 
-        if time() + delta_time() > self.active_tail.despawn_time():
+        if current_time + delta_time() > self.active_tail.despawn_time():
             return
         match info.connector_kind:
             case (
