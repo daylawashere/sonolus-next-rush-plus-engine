@@ -72,6 +72,7 @@ class Stage(PlayArchetype):
     @callback(order=2)
     def touch(self):
         empty_lanes = VarArray[float, Dim[16]].new()
+        allow_sfx = time() > PlayLevelMemory.last_note_sfx_time + 0.6 or not Options.prevent_empty_lane_sfx
         for touch in touches():
             if not self.total_hitbox.contains_point(touch.position):
                 continue
@@ -82,7 +83,7 @@ class Stage(PlayArchetype):
             if touch.started:
                 play_lane_hit_effects(
                     rounded_lane,
-                    sfx=time() > PlayLevelMemory.last_note_sfx_time + 0.6 or not Options.prevent_empty_lane_sfx,
+                    sfx=allow_sfx,
                 )
                 if not empty_lanes.is_full():
                     empty_lanes.append(rounded_lane)
