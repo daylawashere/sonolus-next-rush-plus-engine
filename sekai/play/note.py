@@ -28,7 +28,7 @@ from sekai.lib import archetype_names
 from sekai.lib.buckets import WINDOW_SCALE, SekaiWindow
 from sekai.lib.connector import ActiveConnectorInfo, ConnectorKind, ConnectorLayer
 from sekai.lib.ease import EaseType, ease
-from sekai.lib.layout import FlickDirection, Layout, layout_hitbox, layout_lane, progress_to
+from sekai.lib.layout import FlickDirection, Layout, layout_hitbox, progress_to
 from sekai.lib.note import (
     NoteEffectKind,
     NoteKind,
@@ -574,10 +574,10 @@ class BaseNote(PlayArchetype):
             if Options.lane_effect_enabled:
                 particles = get_note_particles(self.kind, self.direction)
                 if particles.lane.id == BaseParticles.critical_flick_note_lane_linear.id:
-                    layout = layout_lane(self.lane, self.size)
                     ParticleManager.spawn(
-                        particle=particles.lane.spawn(layout, duration=1 / Options.effect_animation_speed),
+                        particles=particles,
                         lane=self.lane,
+                        size=self.size,
                         spawn_time=time(),
                     )
         if self.is_scored:
