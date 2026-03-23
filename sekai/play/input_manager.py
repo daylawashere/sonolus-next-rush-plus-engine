@@ -4,7 +4,6 @@ from sonolus.script.archetype import PlayArchetype, callback
 from sonolus.script.array import Dim
 from sonolus.script.containers import ArrayMap, ArraySet
 from sonolus.script.globals import level_memory
-from sonolus.script.iterator import maybe_next
 from sonolus.script.runtime import Touch, touches
 
 from sekai.lib import archetype_names
@@ -62,21 +61,16 @@ class InputManager(PlayArchetype):
 def update_input_state():
     old_disallowed_empty_touches = +InputState.disallowed_empty_touches
     InputState.disallowed_empty_touches.clear()
-    for existing_id in old_disallowed_empty_touches:
-        maybe_touch = maybe_next(touch for touch in touches() if touch.id == existing_id)
-        if maybe_touch.is_nothing:
-            continue
-        touch = maybe_touch.get()
-        disallow_empty(touch)
 
     old_disallowed_release_touches = +InputState.disallowed_release_touches
     InputState.disallowed_release_touches.clear()
-    for existing_id, until_time in old_disallowed_release_touches.items():
-        maybe_touch = maybe_next(touch for touch in touches() if touch.id == existing_id)
-        if maybe_touch.is_nothing:
-            continue
-        touch = maybe_touch.get()
-        InputState.disallowed_release_touches[touch.id] = until_time
+
+    for touch in touches():
+        if touch.id in old_disallowed_empty_touches:
+            disallow_empty(touch)
+
+        if touch.id in old_disallowed_release_touches:
+            InputState.disallowed_release_touches[touch.id] = old_disallowed_release_touches[touch.id]
 
 
 def preassign_taps():
@@ -151,14 +145,14 @@ def preassign_releases():
         hitbox_l = min(hitbox_l, current_l)
         hitbox_r = max(hitbox_r, current_r)
         hitbox_layout = layout_hitbox(hitbox_l, hitbox_r)
+        if current.active_head_ref.index > 0:
+            active_connector_info = current.active_head_ref.get().active_connector_info
+            connector_hitbox = active_connector_info.get_hitbox(get_leniency(current.kind))
+            ignore_lockout = not any(not t.ended and connector_hitbox.contains_point(t.position) for t in touches())
+        else:
+            ignore_lockout = False
         for release_i in active_release_indexes:
             touch = touches()[release_i]
-            if current.active_head_ref.index > 0:
-                active_connector_info = current.active_head_ref.get().active_connector_info
-                connector_hitbox = active_connector_info.get_hitbox(get_leniency(current.kind))
-                ignore_lockout = not any(not t.ended and connector_hitbox.contains_point(t.position) for t in touches())
-            else:
-                ignore_lockout = False
             if (
                 hitbox_layout.contains_point(touch.position)
                 and (ignore_lockout or is_allowed_release(touch, current.target_time))
