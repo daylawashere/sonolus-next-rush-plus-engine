@@ -1,5 +1,5 @@
 from math import cos, pi
-from typing import assert_never
+from typing import Protocol, assert_never
 
 from sonolus.script.interval import interp
 from sonolus.script.runtime import is_multiplayer, is_play, is_replay, is_watch, time
@@ -11,6 +11,18 @@ from sekai.lib.custom_elements import (
     draw_score_number,
 )
 from sekai.lib.effect import SFX_DISTANCE, Effects
+from sekai.lib.layer import (
+    LAYER_BACKGROUND,
+    LAYER_BACKGROUND_COVER,
+    LAYER_COVER,
+    LAYER_COVER_LINE,
+    LAYER_JUDGMENT,
+    LAYER_JUDGMENT_LINE,
+    LAYER_STAGE,
+    LAYER_STAGE_COVER,
+    LAYER_STAGE_LANE,
+    get_z,
+)
 from sekai.lib.layout import (
     ScoreGaugeType,
     layout_background_cover,
@@ -294,3 +306,37 @@ def play_lane_particle(lane: float):
     if Options.lane_effect_enabled:
         layout = layout_lane(lane, 0.5)
         ActiveParticles.lane.spawn(layout, duration=0.3 / Options.effect_animation_speed)
+
+
+class StageZLayersProtocol(Protocol):
+    z_layer_stage_lane: float
+    z_layer_cover: float
+    z_layer_cover_line: float
+    z_layer_judgment: float
+    z_layer_judgment_line: float
+    z_layer_background_cover: float
+    z_layer_stage: float
+    z_layer_stage_cover: float
+    z_layer_score: float
+    z_layer_score_glow: float
+    z_layer_score_bar: float
+    z_layer_score_bar_mask: float
+    z_layer_score_bar_rate: float
+    z_layer_background: float
+
+
+def init_stage_z_layers(stage_instance: StageZLayersProtocol):
+    stage_instance.z_layer_stage_lane = get_z(LAYER_STAGE_LANE)
+    stage_instance.z_layer_cover = get_z(LAYER_COVER)
+    stage_instance.z_layer_cover_line = get_z(LAYER_COVER_LINE)
+    stage_instance.z_layer_judgment = get_z(LAYER_JUDGMENT)
+    stage_instance.z_layer_judgment_line = get_z(LAYER_JUDGMENT_LINE)
+    stage_instance.z_layer_background_cover = get_z(LAYER_BACKGROUND_COVER)
+    stage_instance.z_layer_stage = get_z(LAYER_STAGE)
+    stage_instance.z_layer_stage_cover = get_z(LAYER_STAGE_COVER)
+    stage_instance.z_layer_score = get_z(layer=LAYER_JUDGMENT)
+    stage_instance.z_layer_score_glow = get_z(layer=LAYER_JUDGMENT, etc=1)
+    stage_instance.z_layer_score_bar = get_z(layer=LAYER_JUDGMENT, etc=2)
+    stage_instance.z_layer_score_bar_mask = get_z(layer=LAYER_JUDGMENT, etc=3)
+    stage_instance.z_layer_score_bar_rate = get_z(layer=LAYER_JUDGMENT, etc=4)
+    stage_instance.z_layer_background = get_z(layer=LAYER_BACKGROUND)
