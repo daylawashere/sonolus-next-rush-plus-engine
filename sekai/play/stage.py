@@ -6,21 +6,9 @@ from sonolus.script.quad import Rect
 from sonolus.script.runtime import offset_adjusted_time, time, touches
 
 from sekai.lib import archetype_names
-from sekai.lib.layer import (
-    LAYER_BACKGROUND,
-    LAYER_BACKGROUND_COVER,
-    LAYER_COVER,
-    LAYER_COVER_LINE,
-    LAYER_JUDGMENT,
-    LAYER_JUDGMENT_LINE,
-    LAYER_STAGE,
-    LAYER_STAGE_COVER,
-    LAYER_STAGE_LANE,
-    get_z,
-)
 from sekai.lib.layout import layout_hitbox
 from sekai.lib.options import Options
-from sekai.lib.stage import draw_stage_and_accessories, play_lane_hit_effects
+from sekai.lib.stage import draw_stage_and_accessories, init_stage_z_layers, play_lane_hit_effects
 from sekai.lib.streams import Streams
 from sekai.play import custom_elements, initialization, input_manager
 from sekai.play.common import PlayLevelMemory
@@ -52,20 +40,8 @@ class Stage(PlayArchetype):
         return True
 
     def initialize(self):
-        self.z_layer_stage_lane = get_z(LAYER_STAGE_LANE)
-        self.z_layer_cover = get_z(LAYER_COVER)
-        self.z_layer_cover_line = get_z(LAYER_COVER_LINE)
-        self.z_layer_judgment = get_z(LAYER_JUDGMENT)
-        self.z_layer_judgment_line = get_z(LAYER_JUDGMENT_LINE)
-        self.z_layer_background_cover = get_z(LAYER_BACKGROUND_COVER)
-        self.z_layer_stage = get_z(LAYER_STAGE)
-        self.z_layer_stage_cover = get_z(LAYER_STAGE_COVER)
-        self.z_layer_score = get_z(layer=LAYER_JUDGMENT)
-        self.z_layer_score_glow = get_z(layer=LAYER_JUDGMENT, etc=1)
-        self.z_layer_score_bar = get_z(layer=LAYER_JUDGMENT, etc=2)
-        self.z_layer_score_bar_mask = get_z(layer=LAYER_JUDGMENT, etc=3)
-        self.z_layer_score_bar_rate = get_z(layer=LAYER_JUDGMENT, etc=4)
-        self.z_layer_background = get_z(layer=LAYER_BACKGROUND)
+        init_stage_z_layers(self)
+
         self.total_hitbox = layout_hitbox(-7, 7)
         self.w_scale = (self.total_hitbox.r - self.total_hitbox.l) / 14
 
