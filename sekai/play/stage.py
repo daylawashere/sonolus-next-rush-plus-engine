@@ -6,16 +6,19 @@ from sonolus.script.quad import Rect
 from sonolus.script.runtime import offset_adjusted_time, time, touches
 
 from sekai.lib import archetype_names
+from sekai.lib.custom_elements import LifeManager, ScoreIndicator
+from sekai.lib.initialization import LastNote
 from sekai.lib.layout import layout_hitbox
 from sekai.lib.options import Options
 from sekai.lib.stage import draw_stage_and_accessories, init_stage_z_layers, play_lane_hit_effects
 from sekai.lib.streams import Streams
-from sekai.play import custom_elements, initialization, input_manager
+from sekai.play import custom_elements, input_manager
 from sekai.play.common import PlayLevelMemory
 
 
 class Stage(PlayArchetype):
     name = archetype_names.STAGE
+    dead_time: float = entity_memory()
     z_layer_stage_lane: float = entity_memory()
     z_layer_judgment: float = entity_memory()
     z_layer_cover: float = entity_memory()
@@ -41,6 +44,7 @@ class Stage(PlayArchetype):
 
     def initialize(self):
         init_stage_z_layers(self)
+        self.dead_time = -2
 
         self.total_hitbox = layout_hitbox(-7, 7)
         self.w_scale = (self.total_hitbox.r - self.total_hitbox.l) / 14
@@ -93,13 +97,16 @@ class Stage(PlayArchetype):
             self.z_layer_score_bar_rate,
             self.z_layer_background,
             custom_elements.ComboJudgeMemory.ap,
-            custom_elements.ScoreIndicator.score,
-            custom_elements.ScoreIndicator.note_score,
-            custom_elements.ScoreIndicator.note_time,
-            custom_elements.ScoreIndicator.percentage,
-            custom_elements.LifeManager.life,
-            initialization.LastNote.last_time,
+            ScoreIndicator.score,
+            ScoreIndicator.note_score,
+            ScoreIndicator.note_time,
+            ScoreIndicator.percentage,
+            LifeManager.life,
+            LastNote.last_time,
+            self.dead_time,
         )
+        if LifeManager.life == 0 and self.dead_time != -2:
+            self.dead_time = time()
 
     def update_sequential(self):
-        Streams.life[self.index][offset_adjusted_time()] = custom_elements.LifeManager.life
+        Streams.life[self.index][offset_adjusted_time()] = LifeManager.life
