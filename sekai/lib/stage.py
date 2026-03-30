@@ -1,8 +1,9 @@
 from math import cos, pi
 from typing import Protocol, assert_never
 
-from sonolus.script.interval import interp
-from sonolus.script.runtime import is_multiplayer, is_play, is_replay, is_watch, time
+from sonolus.script.interval import interp, unlerp_clamped
+from sonolus.script.runtime import is_multiplayer, is_play, is_replay, is_watch, screen, time
+from sonolus.script.vec import Vec2
 
 from sekai.lib.custom_elements import (
     draw_life_number,
@@ -24,6 +25,7 @@ from sekai.lib.layer import (
     get_z,
 )
 from sekai.lib.layout import (
+    Quad,
     ScoreGaugeType,
     layout_background_cover,
     layout_custom_tag,
@@ -45,7 +47,11 @@ from sekai.lib.layout import (
 from sekai.lib.level_config import LevelConfig
 from sekai.lib.options import Options, SekaiVersion, StageCoverMode
 from sekai.lib.particle import ActiveParticles
-from sekai.lib.skin import ActiveSkin, LifeBarType, ScoreRankType
+from sekai.lib.skin import (
+    ActiveSkin,
+    LifeBarType,
+    ScoreRankType,
+)
 
 
 def draw_stage_and_accessories(
@@ -70,12 +76,13 @@ def draw_stage_and_accessories(
     percentage,
     life=1000.0,
     last_time=1e8,
+    dead_time=1e8,
 ):
     draw_stage(z_stage_lane, z_stage_cover, z_stage, z_judgment_line)
     draw_stage_cover(z_cover, z_cover_line)
     draw_auto_play(z_judgment)
     draw_background_cover(z_background_cover)
-    draw_dead(z_layer_background, life)
+    draw_dead(z_layer_background, life, dead_time)
     draw_score_number(
         ap=ap,
         score=percentage,
@@ -165,10 +172,28 @@ def draw_background_cover(z_background_cover):
         ActiveSkin.background.draw(layout, z=z_background_cover, a=1 - Options.background_alpha)
 
 
-def draw_dead(z_background, life):
+def draw_dead(z_background, life, dead_time):
     if life == 0:
-        layout = layout_background_cover()
-        ActiveSkin.background.draw(layout, z=z_background, a=0.3)
+        if not ActiveSkin.dead_effect.is_available:
+            layout = layout_background_cover()
+            ActiveSkin.background.draw(layout, z=z_background, a=0.3)
+        else:
+            a = unlerp_clamped(0, 0.25, time() - dead_time)
+
+            for i in range(2):
+                for j in range(2):
+                    l_val = screen().l if j == 0 else screen().r
+                    if i == 0:
+                        t_val = screen().t
+                    else:
+                        t_val = screen().b
+                    layout = Quad(
+                        bl=Vec2(l_val, 0),
+                        br=Vec2(0, 0),
+                        tl=Vec2(l_val, t_val),
+                        tr=Vec2(0, t_val),
+                    )
+                    ActiveSkin.dead_effect.draw(quad=layout, z=z_background, a=a)
 
 
 def draw_auto_play(z_judgment):
