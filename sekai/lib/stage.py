@@ -163,7 +163,7 @@ def draw_stage_cover(z_cover, z_cover_line, alpha):
             case StageCoverMode.STAGE_AND_LINE:
                 cover_layout, line_layout = layout_stage_cover_and_line()
                 ActiveSkin.cover.draw(cover_layout, z=z_cover, a=Options.stage_cover_alpha * alpha)
-                ActiveSkin.guide_neutral.draw(line_layout, z=z_cover_line, a=0.75)
+                ActiveSkin.guide_neutral.draw(line_layout, z=z_cover_line, a=0.75 * alpha)
             case StageCoverMode.FULL_WIDTH:
                 layout = layout_full_width_stage_cover()
                 ActiveSkin.cover.draw(layout, z=z_cover, a=Options.stage_cover_alpha * alpha)
