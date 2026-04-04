@@ -38,6 +38,9 @@ class WatchStage(WatchArchetype):
         self.dead_time = -2
 
     def update_parallel(self):
+        weight = ScoreIndicator.total_weight / 20000
+        while weight > 0.5:
+            weight = 0.5 - (weight / 10)
         draw_stage_and_accessories(
             self.z_layer_stage_lane,
             self.z_layer_stage_cover,
@@ -54,13 +57,13 @@ class WatchStage(WatchArchetype):
             self.z_layer_score_bar_rate,
             self.z_layer_background,
             ScoreIndicator.ap,
-            ScoreIndicator.score,
-            ScoreIndicator.note_score,
+            ScoreIndicator.score * (2 - weight),
+            ScoreIndicator.note_score * (2 - weight),
             ScoreIndicator.note_time,
             ScoreIndicator.percentage,
             LifeManager.life,
             LastNote.last_time,
-            self.dead_time,
+            self.dead_time
         )
         if LifeManager.life == 0 and self.dead_time != -2:
             self.dead_time = time()

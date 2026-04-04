@@ -202,10 +202,11 @@ def setting_combo(head: int, skill: int) -> None:
             entity_multiplier=note.WatchBaseNote.at(ptr).entity_score_multiplier,
         )
 
-        y = current_note_weight - total_weight_compensation
-        t = total_weight + y
-        total_weight_compensation = (t - total_weight) - y
+        y = current_note_weight - custom_elements.ScoreIndicator.total_weight_compensation
+        t = custom_elements.ScoreIndicator.total_weight + y
+        custom_elements.ScoreIndicator.total_weight_compensation = (t - custom_elements.ScoreIndicator.total_weight) - y
         total_weight = t
+        custom_elements.ScoreIndicator.total_weight = total_weight
 
         LastNote.last_time = max(LastNote.last_time, note.WatchBaseNote.at(ptr).calc_time)
         ptr = note.WatchBaseNote.at(ptr).next_ref.index

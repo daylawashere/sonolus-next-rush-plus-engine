@@ -49,10 +49,18 @@ class Options:
         standard=True,
         advanced=True,
         default=1,
-        min=0.5,
+        min=0,
         max=2,
-        step=0.05,
+        step=0.01,
         unit=StandardText.PERCENTAGE_UNIT,
+    )
+    talent: float = slider_option(
+        name="Fake Talent",
+        scope="DaylaRush",
+        default=125,
+        min=1,
+        max=9999,
+        step=0.0002,
     )
     note_speed: float = slider_option(
         name=StandardText.NOTE_SPEED,
