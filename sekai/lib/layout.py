@@ -477,9 +477,9 @@ def layout_score_bar() -> Quad:
             h = base_h_unscaled * scale_ratio
             w = h * 4.745
         case SekaiVersion.v1:
-            base_h_unscaled = 0.32 * ui.primary_metric_config.scale
+            base_h_unscaled = 0.31 * ui.primary_metric_config.scale
             h = base_h_unscaled * scale_ratio
-            w = h * 4.6
+            w = h * 4.64
 
     y_shift = (base_h_unscaled - h) / 2
 
@@ -505,7 +505,7 @@ def layout_score_gauge(gauge=0.0, score_type: ScoreGaugeType = ScoreGaugeType.NO
     bar_h_unscaled = (
         0.2655 * ui.primary_metric_config.scale
         if LevelConfig.ui_version == SekaiVersion.v3
-        else 0.32 * ui.primary_metric_config.scale
+        else 0.31 * ui.primary_metric_config.scale
     )
     bar_h_current = bar_h_unscaled * scale_ratio
     y_shift = (bar_h_unscaled - bar_h_current) / 2
@@ -529,14 +529,14 @@ def layout_score_gauge(gauge=0.0, score_type: ScoreGaugeType = ScoreGaugeType.NO
                 1e-3,
             )
         case SekaiVersion.v1:
-            margin_offset = -0.155
-            y_offset = 0.021
+            margin_offset = -0.115
+            y_offset = 0.024
             h = max(
-                (0.062 * ui.primary_metric_config.scale * scale_ratio),
+                (0.048 * ui.primary_metric_config.scale * scale_ratio),
                 1e-3,
             )
             w = max(
-                (h * 18.8 * ((1 - gauge) if score_type == ScoreGaugeType.MASK else 1)),
+                (h * 23.5 * ((1 - gauge) if score_type == ScoreGaugeType.MASK else 1)),
                 1e-3,
             )
 

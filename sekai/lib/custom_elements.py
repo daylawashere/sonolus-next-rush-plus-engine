@@ -606,9 +606,9 @@ def draw_score_bar_number(number: int, z: float, alpha: float = 1.0):
         case SekaiVersion.v1:
             margin_offset = 1.025
             y_offset = -0.07
-            h = 0.14141 * ui.primary_metric_config.scale * scale_ratio
-            w = h * 0.705
-            digit_gap = w * -0.3
+            h = 0.13 * ui.primary_metric_config.scale * scale_ratio
+            w = h * 0.76
+            digit_gap = w * -0.35
 
     bar_base_w = 0.265 * 4.745
     final_scale = ui.primary_metric_config.scale * scale_ratio
