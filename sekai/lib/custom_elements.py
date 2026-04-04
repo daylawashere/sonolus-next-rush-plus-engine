@@ -604,8 +604,8 @@ def draw_score_bar_number(number: int, z: float, alpha: float = 1.0):
             w = h * 0.74
             digit_gap = w * -0.1
         case SekaiVersion.v1:
-            margin_offset = 1.025
-            y_offset = -0.07
+            margin_offset = 1.04
+            y_offset = -0.06
             h = 0.13 * ui.primary_metric_config.scale * scale_ratio
             w = h * 0.76
             digit_gap = w * -0.35
@@ -678,11 +678,11 @@ def draw_score_bar_raw_number(number: int, z: float, time: float, alpha: float =
             w = h * 0.705
             digit_gap = w * -0.04
         case SekaiVersion.v1:
-            margin_offset = 0.51 + (0.442 - 0.51) * clamp(time / 0.2, 0, 1)
-            y_offset = -0.085
-            h = 0.09 * ui.primary_metric_config.scale * scale_ratio
+            margin_offset = 0.545 + (0.442 - 0.51) * clamp(time / 0.2, 0, 1)
+            y_offset = -0.073
+            h = 0.08 * ui.primary_metric_config.scale * scale_ratio
             w = h * 0.705
-            digit_gap = w * -0.3
+            digit_gap = w * -0.4
 
     bar_base_w = 0.27 * 4.6
     final_scale = ui.primary_metric_config.scale * scale_ratio
