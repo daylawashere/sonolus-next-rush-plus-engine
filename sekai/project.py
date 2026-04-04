@@ -10,8 +10,8 @@ from sekai.tutorial.mode import tutorial_mode
 from sekai.watch.mode import watch_mode
 
 engine = Engine(
-    name="next-rush+",
-    title="Next RUSH+",
+    name="Dayla-rush+",
+    title="Dayla RUSH+",
     data=EngineData(
         ui=ui_config,
         options=Options,
