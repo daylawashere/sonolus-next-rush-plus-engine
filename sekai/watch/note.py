@@ -73,7 +73,6 @@ class WatchBaseNote(WatchArchetype):
     next_ref: EntityRef[WatchBaseNote] = imported(name="next")
     prev_ref: EntityRef[WatchBaseNote] = imported(name="prev")
     effect_kind: NoteEffectKind = imported(name="effectKind")
-    next_ref: EntityRef[WatchBaseNote] = imported(name="next")
 
     kind: NoteKind = entity_data()
     data_init_done: bool = entity_data()
@@ -81,7 +80,7 @@ class WatchBaseNote(WatchArchetype):
     visual_start_time: float = entity_data()
     start_time: float = entity_data()
     target_scaled_time: CompositeTime = entity_data()
-    not_render: float = entity_data()
+    not_render: float = shared_memory()
 
     active_connector_info: ActiveConnectorInfo = shared_memory()
     hitbox_lane: float = entity_memory()
@@ -225,9 +224,8 @@ class WatchBaseNote(WatchArchetype):
             leniency = get_leniency(self.kind)
             hitbox_l = self.lane - self.size
             hitbox_r = self.lane + self.size
-            judgment_window = get_note_window(self.kind)
-            window_start = self.target_time + judgment_window.good.start
-            window_end = self.target_time + judgment_window.good.end
+            window_start = self.target_time + self.judgment_window.good.start
+            window_end = self.target_time + self.judgment_window.good.end
 
             # Scan backward to cover connector positions from window start to this tick
             current_ref = +EntityRef[WatchBaseNote]
