@@ -1,4 +1,4 @@
-from math import cos, pi
+from math import cos, pi, floor
 from typing import Protocol, assert_never
 
 from sonolus.script.interval import interp, unlerp_clamped
@@ -78,8 +78,8 @@ def draw_stage_and_accessories(
     last_time=1e8,
     dead_time=1e8,
 ):
-    score = score * (Options.talent / 300) 
-    note_score = note_score * (Options.talent / 300) 
+    score = floor( ( score * (Options.talent / 300) ) * Options.talent_mult) 
+    note_score = floor( ( note_score * (Options.talent / 300 )) * Options.talent_mult) 
     ui_alpha = 1.0
     if Options.ui_intro and time() < -1.0:
         ui_alpha = unlerp_clamped(-2.0, -1.0, time())

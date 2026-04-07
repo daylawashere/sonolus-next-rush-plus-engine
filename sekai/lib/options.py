@@ -50,8 +50,8 @@ class Options:
         advanced=True,
         default=1,
         min=0,
-        max=2,
-        step=0.01,
+        max=4.35,
+        step=0.05,
         unit=StandardText.PERCENTAGE_UNIT,
     )
     talent: float = slider_option(
@@ -61,6 +61,14 @@ class Options:
         min=1,
         max=9999,
         step=0.0002,
+    )
+    talent_mult: float = slider_option(
+        name="Talent Multiplier",
+        scope="DaylaRush",
+        default=1,
+        min=0.5,
+        max=100,
+        step=0.5,
     )
     note_speed: float = slider_option(
         name=StandardText.NOTE_SPEED,
