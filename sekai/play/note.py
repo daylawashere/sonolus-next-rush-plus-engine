@@ -130,7 +130,6 @@ class BaseNote(PlayArchetype):
     played_hit_effects: bool = exported()
 
     # cache
-    hitbox: Rect = entity_memory()
     target_angle: float = entity_memory()
     direction_check_needed: bool = entity_memory()
     attach_frac: float = shared_memory()
@@ -198,10 +197,6 @@ class BaseNote(PlayArchetype):
 
         if self.is_scored:
             schedule_note_auto_sfx(self.effect_kind, self.target_time)
-
-        # caching
-        leniency = get_leniency(self.kind)
-        self.hitbox = layout_hitbox(self.lane - self.size - leniency, self.lane + self.size + leniency)
 
         match self.direction:
             case FlickDirection.UP_OMNI | FlickDirection.DOWN_OMNI:
@@ -536,7 +531,7 @@ class BaseNote(PlayArchetype):
             else:
                 return False
 
-        # The following is the code for next sekai. (Not used in this engine)
+        # The following is the code for next sekai.
 
         # Give until the end of the perfect window to give a right-way touch if we've only had wrong-way touches.
         # After that, wrong-way has no impact anyway.
@@ -600,7 +595,7 @@ class BaseNote(PlayArchetype):
         if time() > self.input_interval.end:
             return
 
-        hitbox = self.get_full_hitbox()
+        hitbox = self.hitbox
         captured_touch_start = -1.0
         for touch in touches():
             if hitbox.contains_point(touch.position) and touch.started:
