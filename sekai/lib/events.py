@@ -145,7 +145,7 @@ def draw_skill_bar(z: float, z2: float, time: float, num: int, effect: SkillMode
         return
 
     enter_progress = unlerp_clamped(0, 0.25, time)
-    exit_progress = unlerp_clamped(2.75, 3, time)
+    exit_progress = unlerp_clamped(3.75, 4, time)
 
     anim = enter_progress - exit_progress
 
@@ -160,7 +160,7 @@ def draw_skill_bar(z: float, z2: float, time: float, num: int, effect: SkillMode
 
         x = -6.7 + x_ratio
         y = 0.433 - y_ratio
-        start_center = Vec2(x=x - 0.2, y=y)
+        start_center = Vec2(x=x - 0.5, y=y)
         target_center = Vec2(x=x, y=y)
         current_center = lerp(start_center, target_center, anim)
         h = 0.08
@@ -184,7 +184,7 @@ def draw_skill_bar(z: float, z2: float, time: float, num: int, effect: SkillMode
     if LevelConfig.ui_version == SekaiVersion.v3:
         x = -7.5 + x_ratio
         y = 0.45 - y_ratio
-        icon_start_center = Vec2(x=x - 0.2, y=y)
+        icon_start_center = Vec2(x=x - 0.5, y=y)
         icon_target_center = Vec2(x=x, y=y)
         icon_current_center = lerp(icon_start_center, icon_target_center, anim)
         h = 0.045
@@ -202,18 +202,18 @@ def draw_skill_bar(z: float, z2: float, time: float, num: int, effect: SkillMode
     if LevelConfig.ui_version == SekaiVersion.v3:
         x = -5.58 + x_ratio
         y = 0.474 - y_ratio
-        text_start_center = Vec2(x=x - 0.2, y=y)
+        text_start_center = Vec2(x=x - 0.5, y=y)
         text_target_center = Vec2(x=x, y=y)
         text_changing_center = Vec2(x=x + 0.1, y=y)
 
-        mid_progress = unlerp_clamped(1.5, 1.75, time)
+        mid_progress = unlerp_clamped(1.75, 2, time)
         current_start_pos = +Vec2
-        if time >= 1.5 and time < 2.75:
+        if time >= 1.75 and time < 3:
             current_start_pos @= text_changing_center
             final_anim = mid_progress
         else:
             current_start_pos @= text_start_center
-            if time < 1.5:
+            if time < 1.75:
                 final_anim = enter_progress
             else:
                 final_anim = mid_progress - exit_progress
@@ -229,7 +229,7 @@ def draw_skill_bar(z: float, z2: float, time: float, num: int, effect: SkillMode
         w = h * 14
         final_anim = anim
         layout @= layout_skill_bar(text_current_center, w, h)
-    if time <= 1.5 or LevelConfig.ui_version == SekaiVersion.v1:
+    if time <= 1.75 or LevelConfig.ui_version == SekaiVersion.v1:
         ActiveSkin.skill_level.get_sprite(level).draw(layout, z2, final_anim)
     else:
         ActiveSkin.skill_value.get_sprite(effect).draw(layout, z2, final_anim)
