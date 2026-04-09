@@ -67,18 +67,18 @@ class WatchTimescaleGroup(WatchArchetype):
 
     @callback(order=-2)
     def preprocess(self):
-        self.time_to_scaled_time.init(self.first_ref.index)
-        self.time_to_last_change_index.init(self.first_ref.index)
-        self.scaled_time_to_first_time.init(self.first_ref.index)
-        self.scaled_time_to_first_time_2.init(self.first_ref.index)
+        self.time_to_scaled_time.reset(self.first_ref.index)
+        self.time_to_last_change_index.reset(self.first_ref.index)
+        self.scaled_time_to_first_time.reset(self.first_ref.index)
+        self.scaled_time_to_first_time_2.reset(self.first_ref.index)
         self.last_updated = -1e8
 
     def update(self):
         if self.last_updated == time():
             return
         self.last_updated = time()
-        self.current_scaled_time = self.time_to_scaled_time.get(time())
-        self.last_change.index = self.time_to_last_change_index.get(time())
+        self.current_scaled_time = self.time_to_scaled_time.get(time(), self.first_ref.index)
+        self.last_change.index = self.time_to_last_change_index.get(time(), self.first_ref.index)
         if self.last_change.index > 0:
             self.hide_notes = self.last_change.get().hide_notes
         else:
