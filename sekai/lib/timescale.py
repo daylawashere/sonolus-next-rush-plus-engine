@@ -8,7 +8,7 @@ from sonolus.script import runtime
 from sonolus.script.archetype import EntityRef, get_archetype_by_name
 from sonolus.script.interval import remap
 from sonolus.script.record import Record
-from sonolus.script.timing import TimescaleEase
+from sonolus.script.timing import TimescaleEase, beat_to_bpm, beat_to_time
 
 from sekai.lib import archetype_names
 from sekai.lib.options import Options
