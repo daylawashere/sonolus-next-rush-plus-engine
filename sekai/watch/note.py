@@ -73,6 +73,7 @@ class WatchBaseNote(WatchArchetype):
     next_ref: EntityRef[WatchBaseNote] = imported(name="next")
     prev_ref: EntityRef[WatchBaseNote] = imported(name="prev")
     effect_kind: NoteEffectKind = imported(name="effectKind")
+    next_ref: EntityRef[WatchBaseNote] = imported(name="next")
 
     kind: NoteKind = entity_data()
     data_init_done: bool = entity_data()

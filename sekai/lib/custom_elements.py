@@ -597,7 +597,7 @@ def draw_score_bar_number(number: int, z: float, alpha: float = 1.0):
     scale_ratio = min(1, aspect_ratio() / (16 / 9))
 
     bar_h_unscaled = (
-        0.27 * ui.primary_metric_config.scale
+        0.2655 * ui.primary_metric_config.scale
         if LevelConfig.ui_version == SekaiVersion.v3
         else 0.32 * ui.primary_metric_config.scale
     )
@@ -612,18 +612,18 @@ def draw_score_bar_number(number: int, z: float, alpha: float = 1.0):
     match LevelConfig.ui_version:
         case SekaiVersion.v3:
             margin_offset = 1.02
-            y_offset = -0.09
+            y_offset = -0.075
             h = 0.09141 * ui.primary_metric_config.scale * scale_ratio
-            w = h * 0.705
-            digit_gap = w * -0.04
+            w = h * 0.74
+            digit_gap = w * -0.1
         case SekaiVersion.v1:
-            margin_offset = 1.025
-            y_offset = -0.07
-            h = 0.14141 * ui.primary_metric_config.scale * scale_ratio
-            w = h * 0.705
-            digit_gap = w * -0.3
+            margin_offset = 1.04
+            y_offset = -0.06
+            h = 0.13 * ui.primary_metric_config.scale * scale_ratio
+            w = h * 0.76
+            digit_gap = w * -0.35
 
-    bar_base_w = 0.27 * 4.6
+    bar_base_w = 0.265 * 4.745
     final_scale = ui.primary_metric_config.scale * scale_ratio
     current_bar_w = bar_base_w * final_scale
 
@@ -671,7 +671,7 @@ def draw_score_bar_raw_number(number: int, z: float, time: float, alpha: float =
     scale_ratio = min(1, aspect_ratio() / (16 / 9))
 
     bar_h_unscaled = (
-        0.27 * ui.primary_metric_config.scale
+        0.2655 * ui.primary_metric_config.scale
         if LevelConfig.ui_version == SekaiVersion.v3
         else 0.32 * ui.primary_metric_config.scale
     )
@@ -685,17 +685,17 @@ def draw_score_bar_raw_number(number: int, z: float, time: float, alpha: float =
     digit_gap = 0
     match LevelConfig.ui_version:
         case SekaiVersion.v3:
-            margin_offset = 0.56 + (0.492 - 0.56) * clamp(time / 0.2, 0, 1)
-            y_offset = -0.102
+            margin_offset = 0.545 + (0.492 - 0.56) * clamp(time / 0.2, 0, 1)
+            y_offset = -0.095
             h = 0.06 * ui.primary_metric_config.scale * scale_ratio
             w = h * 0.705
             digit_gap = w * -0.04
         case SekaiVersion.v1:
-            margin_offset = 0.51 + (0.442 - 0.51) * clamp(time / 0.2, 0, 1)
-            y_offset = -0.085
-            h = 0.09 * ui.primary_metric_config.scale * scale_ratio
+            margin_offset = 0.545 + (0.442 - 0.51) * clamp(time / 0.2, 0, 1)
+            y_offset = -0.073
+            h = 0.08 * ui.primary_metric_config.scale * scale_ratio
             w = h * 0.705
-            digit_gap = w * -0.3
+            digit_gap = w * -0.4
 
     bar_base_w = 0.27 * 4.6
     final_scale = ui.primary_metric_config.scale * scale_ratio

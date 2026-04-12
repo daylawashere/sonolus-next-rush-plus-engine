@@ -1,4 +1,4 @@
-from math import cos, pi
+from math import cos, pi, floor
 from typing import Protocol, assert_never
 
 from sonolus.script.interval import interp, unlerp_clamped
@@ -78,6 +78,8 @@ def draw_stage_and_accessories(
     last_time=1e8,
     dead_time=1e8,
 ):
+    score = floor( ( score * (Options.talent / 300) ) * Options.talent_mult) 
+    note_score = floor( ( note_score * (Options.talent / 300 )) * Options.talent_mult) 
     ui_alpha = 1.0
     if Options.ui_intro and time() < -1.0:
         ui_alpha = unlerp_clamped(-2.0, -1.0, time())
@@ -289,7 +291,7 @@ def draw_score_bar(
 
 
 def get_gauge_progress(score):
-    xp = (0, 4000, 400000, 620000, 840000, 1000000)
+    xp = (0, 20000, 450000, 930000, 1150000, 1300000)
     fp = (
         0,
         0.447,
@@ -303,13 +305,13 @@ def get_gauge_progress(score):
 
 
 def get_score_rank(score):
-    if score >= 840000:
+    if score >= 1150000:
         return ScoreRankType.S
-    elif score >= 620000:
+    elif score >= 930000:
         return ScoreRankType.A
-    elif score >= 400000:
+    elif score >= 450000:
         return ScoreRankType.B
-    elif score >= 4000:
+    elif score >= 20000:
         return ScoreRankType.C
     else:
         return ScoreRankType.D

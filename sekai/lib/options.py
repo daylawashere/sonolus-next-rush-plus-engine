@@ -49,10 +49,26 @@ class Options:
         standard=True,
         advanced=True,
         default=1,
-        min=0.5,
-        max=2,
+        min=0,
+        max=4.35,
         step=0.05,
         unit=StandardText.PERCENTAGE_UNIT,
+    )
+    talent: float = slider_option(
+        name="Fake Talent",
+        scope="DaylaRush",
+        default=125,
+        min=1,
+        max=9999,
+        step=0.0002,
+    )
+    talent_mult: float = slider_option(
+        name="Talent Multiplier",
+        scope="DaylaRush",
+        default=1,
+        min=0.5,
+        max=100,
+        step=0.5,
     )
     note_speed: float = slider_option(
         name=StandardText.NOTE_SPEED,
@@ -343,7 +359,7 @@ class Options:
     note_margin: float = slider_option(
         name="Note Margin",
         scope="Next Sekai",
-        default=0.0,
+        default=0.08,
         min=0.0,
         max=0.2,
         step=0.01,

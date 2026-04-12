@@ -345,6 +345,9 @@ class BaseNote(PlayArchetype):
             else:
                 self.judge_wrong_way(self.best_touch_time)
             return
+        if self.tick_trigger():
+            self.complete()
+            return
         if self.is_scored and time() in self.input_interval and self.captured_touch_id == 0:
             if has_tap_input(self.kind):
                 NoteMemory.active_tap_input_notes.append(self.ref())
@@ -630,6 +633,8 @@ class BaseNote(PlayArchetype):
         # so we don't care which touch matched the tap id, just that the tap id is set.
 
         hitbox = self.hitbox
+
+        wrong_way_touch_time = -1.0
 
         wrong_way_touch_time = -1.0
 
