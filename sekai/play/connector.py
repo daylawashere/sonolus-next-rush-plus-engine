@@ -143,6 +143,8 @@ class Connector(PlayArchetype):
                     if not touch.ended and hitbox.contains_point(touch.position):
                         if not self.active_connector_info.is_active:
                             self.active_connector_info.active_start_time = current_time
+                            if input_manager.is_allowed_empty(touch):
+                                input_manager.disallow_empty(touch)
                         self.active_connector_info.is_active = True
                         self.delay = False
                         break

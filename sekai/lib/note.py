@@ -808,12 +808,13 @@ def play_note_hit_effects(
     direction: FlickDirection,
     judgment: Judgment,
 ):
-    if kind == NoteKind.DAMAGE and judgment == Judgment.PERFECT:
-        return
+    # Damage with overridden sfx can play, so this goes before the damage check
     sfx = get_note_effect(effect_kind, judgment)
-    particles = get_note_particles(kind, direction)
     if Options.sfx_enabled and not Options.auto_sfx and not is_watch() and sfx.is_available:
         sfx.play(SFX_DISTANCE)
+    if kind == NoteKind.DAMAGE and judgment == Judgment.PERFECT:
+        return
+    particles = get_note_particles(kind, direction)
     if Options.note_effect_enabled:
         linear_particle = particles.get_linear(judgment)
         if linear_particle.is_available:
@@ -1005,7 +1006,7 @@ def draw_tutorial_note_slot_effects(
         )
 
 
-def get_note_window(kind: NoteKind) -> SekaiWindow:
+def get_note_window(kind: NoteKind, is_connector_tick) -> SekaiWindow:
     result = +SekaiWindow
     match kind:
         case NoteKind.NORM_TAP | NoteKind.NORM_HEAD_TAP | NoteKind.NORM_TAIL_TAP:
@@ -1040,7 +1041,12 @@ def get_note_window(kind: NoteKind) -> SekaiWindow:
             result @= TRACE_FLICK_NORMAL_WINDOW
         case NoteKind.CRIT_TAIL_TRACE_FLICK:
             result @= TRACE_FLICK_CRITICAL_WINDOW
-        case NoteKind.NORM_TICK | NoteKind.CRIT_TICK | NoteKind.HIDE_TICK | NoteKind.ANCHOR | NoteKind.DAMAGE:
+        case NoteKind.NORM_TICK | NoteKind.CRIT_TICK | NoteKind.HIDE_TICK:
+            if is_connector_tick:
+                result @= EMPTY_JUDGMENT_WINDOW
+            else:
+                result @= SLIDE_TICK_JUDGMENT_WINDOW
+        case NoteKind.ANCHOR | NoteKind.DAMAGE:
             result @= EMPTY_JUDGMENT_WINDOW
         case _:
             assert_never(kind)
