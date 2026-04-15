@@ -373,7 +373,7 @@ def draw_stage_and_accessories(
     last_time=1e8,
     dead_time=1e8,
 ):  
-    weight = ScoreIndicator.total_weight / 20000
+    weight = ScoreIndicator.total_weight.total / 20000
     while weight > 0.5:
             weight = 0.5 - (weight / 10)
     if Options.talent_enabled:
