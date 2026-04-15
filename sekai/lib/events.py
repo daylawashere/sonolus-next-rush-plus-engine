@@ -288,7 +288,7 @@ def draw_skill_bar(z: float, z2: float, time: float, num: int, effect: SkillMode
         x = -1.5
         y = 0.633
         icon_current_center = Vec2(x=x, y=y)
-        h = 0.045
+        h = 0.0532
         w = h * 7
         layout @= layout_skill_bar(icon_current_center, w, h)
     ActiveSkin.skill_icon.get_sprite(num).draw(layout, z2, anim)
