@@ -20,6 +20,7 @@ from sekai.lib.custom_elements import (
     draw_score_bar_raw_number,
     draw_score_number,
 )
+from sekai.lib.custom_elements import ScoreIndicator
 from sekai.lib.ease import EaseType, ease
 from sekai.lib.effect import SFX_DISTANCE, Effects
 from sekai.lib.layer import (
@@ -371,7 +372,15 @@ def draw_stage_and_accessories(
     life=1000.0,
     last_time=1e8,
     dead_time=1e8,
-):
+):  
+    weight = ScoreIndicator.total_weight / 20000
+    while weight > 0.5:
+            weight = 0.5 - (weight / 10)
+    if Options.talent_enabled:
+        score = score * (2 - weight)
+        score = floor( ( score * (Options.talent / 300) ) * Options.talent_mult) 
+        note_score = note_score * (2 - weight)
+        note_score = floor( ( note_score * (Options.talent / 300 )) * Options.talent_mult) 
     ui_alpha = 1.0
     if Options.ui_intro and time() < -1.0:
         ui_alpha = unlerp_clamped(-2.0, -1.0, time())
@@ -914,6 +923,7 @@ def draw_score_bar(
     z_layer_score_bar_rate,
     alpha,
 ):
+    
     if Options.hide_ui >= 2:
         return
     if not ActiveSkin.ui_number.available:
