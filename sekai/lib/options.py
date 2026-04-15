@@ -65,6 +65,27 @@ class Options:
         step=0.05,
         unit=StandardText.PERCENTAGE_UNIT,
     )
+    talent_enabled: bool = toggle_option(
+        name="Enable Talent",
+        scope="DaylaRush",
+        default=True,
+    )
+    talent: float = slider_option(
+        name="Talent",
+        scope="DaylaRush",
+        default=125,
+        min=1,
+        max=9999,
+        step=0.0002,
+    )
+    talent_mult: float = slider_option(
+        name="Talent Multiplier",
+        scope="DaylaRush",
+        default=1,
+        min=0.25,
+        max=250,
+        step=0.25,
+    )
     note_speed: float = slider_option(
         name=StandardText.NOTE_SPEED,
         scope="Sekai",
