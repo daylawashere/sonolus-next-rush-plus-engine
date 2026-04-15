@@ -76,7 +76,7 @@ class Skill(PlayArchetype):
     def update_parallel(self):
         current_time = time()
         elapsed = current_time - self.start_time
-        if current_time < self.end_time_3:
+        if current_time < self.end_time_3 + 1:
             draw_skill_bar(self.z, self.z2, elapsed, self.count, self.effect, self.level)
         if (current_time >= self.end_time_3 and self.effect != SkillMode.JUDGMENT) or current_time >= self.end_time_6:
             self.despawn = True
