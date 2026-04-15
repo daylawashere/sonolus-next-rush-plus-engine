@@ -386,7 +386,7 @@ class Options:
     note_margin: float = slider_option(
         name="Note Margin",
         scope="Next Sekai",
-        default=0.0,
+        default=0.08,
         min=0.0,
         max=0.2,
         step=0.01,
