@@ -6,9 +6,9 @@ from typing import Protocol, assert_never, cast
 
 from sonolus.script import runtime
 from sonolus.script.archetype import EntityRef, get_archetype_by_name
-from sonolus.script.interval import clamp, interp, lerp
+from sonolus.script.interval import clamp, interp, lerp, unlerp_clamped
 from sonolus.script.quad import Quad
-from sonolus.script.record import Record, unlerp_clamped
+from sonolus.script.record import Record
 from sonolus.script.runtime import is_multiplayer, is_play, is_replay, is_watch, screen, time
 from sonolus.script.vec import Vec2
 
@@ -420,7 +420,11 @@ def normalize_transition[T](value: Transition[T] | T) -> Transition[T]:
 def draw_basic_stage(z_stage_lane, z_stage_cover, z_stage, z_judgment_line, alpha=1.0):
     if not Options.show_lane:
         return
-    if ActiveSkin.sekai_stage_lane.is_available and ActiveSkin.sekai_stage_cover.is_available and not LevelConfig.dynamic_stages:
+    if (
+        ActiveSkin.sekai_stage_lane.is_available
+        and ActiveSkin.sekai_stage_cover.is_available
+        and not LevelConfig.dynamic_stages
+    ):
         draw_sekai_divided_stage(z_stage_lane, z_stage_cover, alpha)
     elif ActiveSkin.sekai_stage.is_available and not LevelConfig.dynamic_stages:
         draw_sekai_stage(z_stage, alpha)

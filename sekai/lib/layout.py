@@ -208,7 +208,6 @@ def refresh_layout():
     DynamicLayout.note_h = NOTE_H * (0.6 * zoom + 0.4)
     DynamicLayout.scaled_note_h = DynamicLayout.note_h * DynamicLayout.h_scale
 
-
     if aspect_ratio() > TARGET_ASPECT_RATIO:
         field_w = screen().h * TARGET_ASPECT_RATIO
         field_h = screen().h
@@ -387,6 +386,7 @@ def layout_stage_cover() -> Quad:
         t=max(LANE_T, get_perspective_y(1)),
         b=b + 0.002,
     )
+
 
 def layout_stage_cover_and_line() -> tuple[Quad, Quad]:
     b = lerp(APPROACH_SCALE, 1.0, Options.stage_cover)
