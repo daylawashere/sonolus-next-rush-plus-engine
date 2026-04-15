@@ -75,7 +75,7 @@ class Skill(WatchArchetype):
     def update_parallel(self):
         current_time = time()
         elapsed = current_time - self.start_time
-        if 0 <= elapsed < 3:
+        if 0 <= elapsed < 4:
             draw_skill_bar(elapsed, self.count, self.effect, self.level)
         if 0 <= elapsed < 6 and self.effect == SkillMode.JUDGMENT and not LevelConfig.dynamic_stages:
             draw_judgment_effect(elapsed)
