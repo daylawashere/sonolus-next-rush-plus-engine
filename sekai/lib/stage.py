@@ -957,7 +957,7 @@ def draw_score_bar(
 
 
 def get_gauge_progress(score):
-    xp = (0, 20000, 450000, 930000, 1150000, 1300000)
+    xp = (0, 20000, 450000, 940000, 1150000, 1300000)
     fp = (
         0,
         0.447,
@@ -973,7 +973,7 @@ def get_gauge_progress(score):
 def get_score_rank(score):
     if score >= 1150000:
         return ScoreRankType.S
-    elif score >= 950000:
+    elif score >= 940000:
         return ScoreRankType.A
     elif score >= 450000:
         return ScoreRankType.B
