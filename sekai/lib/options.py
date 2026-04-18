@@ -104,7 +104,7 @@ class Options:
         description="Adds onto Forced Max Score 1 to bypass certain limitations.",
         scope="DaylaRush+",
         default=0,
-        min=1,
+        min=0,
         max=10000000,
         step=1,
     )
