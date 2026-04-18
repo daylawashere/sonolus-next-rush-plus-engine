@@ -91,12 +91,21 @@ class Options:
         scope="DaylaRush+",
         default=False,
     )
-    forced_score: int = slider_option(
+    forced_score: float = slider_option(
         name="Forced Max Score",
         scope="DaylaRush+",
         default=1234567,
         min=1,
-        max=9999999,
+        max=10000000,
+        step=1,
+    )
+    forced_score_2: float = slider_option(
+        name="Forced Max Score 2",
+        description="Adds onto Forced Max Score 1 to bypass certain limitations.",
+        scope="DaylaRush+",
+        default=0,
+        min=1,
+        max=10000000,
         step=1,
     )
     score_mult: float = slider_option(
@@ -104,9 +113,9 @@ class Options:
         description="Multiplies score if Talent/Force Score is enabled",
         scope="DaylaRush+",
         default=1,
-        min=0.25,
+        min=0.05,
         max=250,
-        step=0.25,
+        step=0.05,
     )
     note_speed: float = slider_option(
         name=StandardText.NOTE_SPEED,
