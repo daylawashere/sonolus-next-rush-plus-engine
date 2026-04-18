@@ -208,7 +208,7 @@ def setting_combo(head: int, skill: int) -> None:
         )
 
         total_weight.add(current_note_weight)
-
+        custom_elements.ScoreIndicator.total_weight.add(current_note_weight)
         LastNote.last_time = max(LastNote.last_time, note.WatchBaseNote.at(ptr).calc_time)
         ptr = note.WatchBaseNote.at(ptr).next_ref.index
 
