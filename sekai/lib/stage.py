@@ -375,7 +375,7 @@ def draw_stage_and_accessories(
 ):  
     unprocessed_weight = ScoreIndicator.total_weight.total
     weight = unprocessed_weight / 20000
-    forced_score_multiplier = Options.forced_score / 1000000
+    forced_score_multiplier = (Options.forced_score + Options.forced_score_2) / 1000000
     while weight > 0.5:
             weight = 0.5 - (weight / 10)
     if Options.talent_enabled:
