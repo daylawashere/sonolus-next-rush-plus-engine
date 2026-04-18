@@ -373,14 +373,24 @@ def draw_stage_and_accessories(
     last_time=1e8,
     dead_time=1e8,
 ):  
-    weight = ScoreIndicator.total_weight.total / 20000
+    unprocessed_weight = ScoreIndicator.total_weight.total
+    weight = unprocessed_weight / 20000
+    forced_score_multiplier = Options.forced_score / 1000000
     while weight > 0.5:
             weight = 0.5 - (weight / 10)
     if Options.talent_enabled:
         score = score * (2 - weight)
         score = floor( ( score * (Options.talent / 300) ) * Options.talent_mult) 
         note_score = note_score * (2 - weight)
-        note_score = floor( ( note_score * (Options.talent / 300 )) * Options.talent_mult) 
+        note_score = floor( ( note_score * (Options.talent / 300 )) * Options.talent_mult)
+    elif Options.force_score:
+        score = score * forced_score_multiplier
+        note_score = note_score * forced_score_multiplier
+    match Options.debug_stuff:
+        case 1:
+            score = weight * 100
+        case 2:
+            score = unprocessed_weight
     ui_alpha = 1.0
     if Options.ui_intro and time() < -1.0:
         ui_alpha = unlerp_clamped(-2.0, -1.0, time())
