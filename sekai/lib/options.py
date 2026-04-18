@@ -65,26 +65,46 @@ class Options:
         step=0.05,
         unit=StandardText.PERCENTAGE_UNIT,
     )
+    debug_stuff: int = select_option(
+        name="Debug",
+        scope="DaylaRush+",
+        default=0,
+        values=["Disable", "Song Weight", "Unprocessed Weight"],
+    )
     talent_enabled: bool = toggle_option(
         name="Enable Talent",
-        scope="DaylaRush",
+        scope="DaylaRush+",
         default=True,
     )
     talent: float = slider_option(
         name="Talent",
-        scope="DaylaRush",
-        default=125,
+        scope="DaylaRush+",
+        default=300,
         min=1,
         max=9999,
         step=0.0002,
     )
     talent_mult: float = slider_option(
         name="Talent Multiplier",
-        scope="DaylaRush",
+        scope="DaylaRush+",
         default=1,
         min=0.25,
         max=250,
         step=0.25,
+    )
+    force_score: bool = toggle_option(
+        name="Enable Force Score",
+        description="Make sure to disable Talent before using.",
+        scope="DaylaRush+",
+        default=False,
+    )
+    forced_score: int = slider_option(
+        name="Forced Score",
+        scope="DaylaRush+",
+        default=1234567,
+        min=1,
+        max=99999999,
+        step=1,
     )
     note_speed: float = slider_option(
         name=StandardText.NOTE_SPEED,
