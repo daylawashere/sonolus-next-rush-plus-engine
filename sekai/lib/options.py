@@ -73,38 +73,40 @@ class Options:
     )
     talent_enabled: bool = toggle_option(
         name="Enable Talent",
+        description="Emulates team power system from Sekai.",
         scope="DaylaRush+",
         default=True,
     )
     talent: float = slider_option(
-        name="Talent",
+        name="Team Power",
         scope="DaylaRush+",
         default=300,
         min=1,
         max=9999,
         step=0.0002,
     )
-    talent_mult: float = slider_option(
-        name="Talent Multiplier",
-        scope="DaylaRush+",
-        default=1,
-        min=0.25,
-        max=250,
-        step=0.25,
-    )
     force_score: bool = toggle_option(
-        name="Enable Force Score",
+        name="Enable Force Max Score",
         description="Make sure to disable Talent before using.",
         scope="DaylaRush+",
         default=False,
     )
     forced_score: int = slider_option(
-        name="Forced Score",
+        name="Forced Max Score",
         scope="DaylaRush+",
         default=1234567,
         min=1,
-        max=99999999,
+        max=9999999,
         step=1,
+    )
+    score_mult: float = slider_option(
+        name="Score Multiplier",
+        description="Multiplies score if Talent/Force Score is enabled",
+        scope="DaylaRush+",
+        default=1,
+        min=0.25,
+        max=250,
+        step=0.25,
     )
     note_speed: float = slider_option(
         name=StandardText.NOTE_SPEED,

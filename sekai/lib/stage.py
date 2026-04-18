@@ -380,12 +380,12 @@ def draw_stage_and_accessories(
             weight = 0.5 - (weight / 10)
     if Options.talent_enabled:
         score = score * (2 - weight)
-        score = floor( ( score * (Options.talent / 300) ) * Options.talent_mult) 
+        score = floor( ( score * (Options.talent / 300) ) * Options.score_mult) 
         note_score = note_score * (2 - weight)
-        note_score = floor( ( note_score * (Options.talent / 300 )) * Options.talent_mult)
+        note_score = floor( ( note_score * (Options.talent / 300 )) * Options.score_mult)
     elif Options.force_score:
-        score = score * forced_score_multiplier
-        note_score = note_score * forced_score_multiplier
+        score = score * forced_score_multiplier * Options.score_mult
+        note_score = note_score * forced_score_multiplier * Options.score_mult
     match Options.debug_stuff:
         case 1:
             score = weight * 100
