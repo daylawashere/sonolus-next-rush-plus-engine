@@ -76,6 +76,12 @@ class Options:
         step=0.05,
         unit=StandardText.PERCENTAGE_UNIT,
     )
+    cap_weight_mult: bool = toggle_option(
+        name="Limit Weight Multiplier",
+        description="Limits the Song Weight Multiplier, not needed usually.",
+        scope="DaylaRush+",
+        default=False,
+    )
     debug_stuff: int = select_option(
         name="Debug",
         scope="DaylaRush+",
@@ -84,12 +90,13 @@ class Options:
     )
     talent_enabled: bool = toggle_option(
         name="Enable Talent",
-        description="Emulates team power system from Sekai.",
+        description="Emulates team power and song scoring system from Sekai.",
         scope="DaylaRush+",
         default=True,
     )
     talent: float = slider_option(
         name="Team Power",
+        description="Leave at 300 for song weight scoring calculation only.",
         scope="DaylaRush+",
         default=300,
         min=1,
@@ -116,6 +123,15 @@ class Options:
         scope="DaylaRush+",
         default=0,
         min=1,
+        max=10000000,
+        step=1,
+    )
+    forced_score_3: float = slider_option(
+        name="Forced Max Score 3",
+        description="Adds onto Forced Max Score 1 and 2 to bypass certain limitations.",
+        scope="DaylaRush+",
+        default=0,
+        min=0,
         max=10000000,
         step=1,
     )
