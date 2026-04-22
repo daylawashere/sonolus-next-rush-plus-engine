@@ -654,7 +654,7 @@ def draw_score_bar_raw_number(number: int, z: float, time: float, alpha: float =
         return
     if time > 1:
         return
-    if number == 0:
+    if floor(number) == 0:
         return
 
     ui = runtime_ui()
