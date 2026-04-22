@@ -74,7 +74,7 @@ class Skill(PlayArchetype):
         elapsed = current_time - self.start_time
         if current_time < self.end_time_3 + 1:
             draw_skill_bar(elapsed, self.count, self.effect, self.level)
-        if (current_time >= self.end_time_3 and self.effect != SkillMode.JUDGMENT) or current_time >= self.end_time_6:
+        if (current_time >= self.end_time_3 + 1 and self.effect != SkillMode.JUDGMENT) or current_time >= self.end_time_6:
             self.despawn = True
             return
         if self.effect == SkillMode.JUDGMENT and not LevelConfig.dynamic_stages:
