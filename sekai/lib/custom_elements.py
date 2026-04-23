@@ -694,7 +694,7 @@ def draw_score_bar_raw_number(number: int, z: float, time: float, alpha: float =
     digit_gap = 0
     match LevelConfig.ui_version:
         case SekaiVersion.v3:
-            margin_offset = 0.545 + (0.492 - 0.56) * ease_out_quad(clamp(time / 0.2, 0, 1))
+            margin_offset = 0.585 + (0.452 - 0.56) * ease_out_quad(clamp(time / 0.2, 0, 1))
             y_offset = -0.095
             h = 0.06 * ui.primary_metric_config.scale * scale_ratio
             w = h * 0.705
