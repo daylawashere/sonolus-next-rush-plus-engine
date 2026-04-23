@@ -5,7 +5,7 @@ from sonolus.script.sprite import Sprite
 from sekai.lib.layer import LAYER_SLOT_EFFECT, LAYER_SLOT_GLOW_EFFECT, get_z
 from sekai.lib.layout import layout_slot_effect, layout_slot_glow_effect
 from sekai.lib.level_config import LevelConfig
-from sekai.lib.options import SekaiVersion
+from sekai.lib.options import SekaiVersion, Options
 from sekai.lib.particle import ActiveParticles
 
 SLOT_GLOW_EFFECT_DURATION = 0.25
@@ -27,7 +27,13 @@ def draw_slot_glow_effect(
     layout = layout_slot_glow_effect(lane, size, height, y_offset=y_offset)
     z = get_z(LAYER_SLOT_GLOW_EFFECT, start_time, lane)
     a = lerp(1, 0, progress)
-    lightweight = 0.25 if ActiveParticles.lightweight.is_available else 1
+    match Options.lightweight:
+        case 1:
+            lightweight = 0.5
+        case 2:
+            lightweight = 0.5 if ActiveParticles.lightweight.is_available else 1
+        case _:
+            lightweight = 1
     sprite.draw(layout, z=z, a=a * lightweight)
 
 
@@ -42,5 +48,11 @@ def draw_slot_effect(
     layout = layout_slot_effect(lane, y_offset=y_offset)
     z = get_z(LAYER_SLOT_EFFECT, start_time, lane, invert_time=True)
     a = lerp(1, 0, progress)
-    lightweight = 0.25 if ActiveParticles.lightweight.is_available else 1
+    match Options.lightweight:
+        case 1:
+            lightweight = 0.5
+        case 2:
+            lightweight = 0.5 if ActiveParticles.lightweight.is_available else 1
+        case _:
+            lightweight = 1
     sprite.draw(layout, z=z, a=a * lightweight)
