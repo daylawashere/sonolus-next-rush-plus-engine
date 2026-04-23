@@ -83,6 +83,19 @@ class Options:
         default=0,
         values=["Disable", "Song Weight", "Unprocessed Weight"],
     )
+    lightweight: int = select_option(
+        name="Lightweight Slot",
+        scope="DaylaRush+",
+        default=2,
+        values=["Disable", "Enabled", "Auto"],
+    )
+    note_perspective: int = select_option(
+        name="v3 Sekai Perspective",
+        description="Uses the v3 SEKAI style for note perspective. Auto will disable Sekai perspective if the skin is not set to V3. ",
+        scope="Rush",
+        default=2,
+        values=["Disable", "Enabled", "Auto"],
+    )
     talent_enabled: bool = toggle_option(
         name="Enable Talent",
         description="Emulates team power and song scoring system from Sekai.",
@@ -279,15 +292,6 @@ class Options:
         name="UI Intro Effect",
         scope="Rush",
         default=True,
-    )
-    note_perspective: float = slider_option(
-        name="Note Perspective",
-        description="Sets the perspective of the notes. As it approaches 0, the notes are drawn vertically.",
-        scope="Rush",
-        default=1,
-        min=0,
-        max=1,
-        step=0.1,
     )
     sfx_enabled: bool = toggle_option(
         name=StandardText.EFFECT,

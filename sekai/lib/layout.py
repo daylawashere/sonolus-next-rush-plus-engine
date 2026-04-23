@@ -1074,8 +1074,24 @@ def layout_fallback_judge_line() -> Quad:
     return perspective_rect(l=-6, r=6, t=1 - nh, b=1 + nh)
 
 
-def layout_note_body_by_edges(l: float, r: float, h: float, travel: float):
-    return perspective_rect(l=l, r=r, t=1 - h, b=1 + h, travel=travel, p=Options.note_perspective)
+def layout_note_body_by_edges(l: float, r: float, h: float, travel: float, not_sekai_p: bool = False):
+    match Options.note_perspective:
+        case 1:
+            p = 0.5 if not not_sekai_p else 1
+        case 2:
+            p = 0.5 if not not_sekai_p and LevelConfig.ui_version == Version.v3 else 1 
+        case _:
+            p = 1
+    
+    return transform_quad(
+        Quad(
+            bl=Vec2(l * (1 + h * p) * travel, (1 + h) * travel),
+            br=Vec2(r * (1 + h * p) * travel, (1 + h) * travel),
+            tl=Vec2(l * (1 - h * p) * travel, (1 - h) * travel),
+            tr=Vec2(r * (1 - h * p) * travel, (1 - h) * travel),
+        )
+    )
+    return perspective_rect(l=l, r=r, t=1 - h, b=1 + h, travel=travel)
 
 
 def layout_note_body_slices_by_edges(
