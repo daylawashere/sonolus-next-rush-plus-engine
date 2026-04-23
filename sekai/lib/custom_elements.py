@@ -506,9 +506,9 @@ def draw_damage_flash(draw_time: float, z: float):
             )
             match Options.lightweight:
                 case 1:
-                    lightweight = 0.5
+                    lightweight = Options.lightweight_factor
                 case 2:
-                    lightweight = 0.5 if ActiveParticles.lightweight.is_available else 1
+                    lightweight = Options.lightweight_factor if ActiveParticles.lightweight.is_available else 1
                 case _:
                     lightweight = 1
             ActiveSkin.damage_flash.draw(quad=layout, z=z, a=a * 0.8 * lightweight)

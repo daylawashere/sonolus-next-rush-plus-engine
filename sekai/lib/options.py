@@ -89,6 +89,15 @@ class Options:
         default=2,
         values=["Disable", "Enabled", "Auto"],
     )
+    lightweight_factor: float = slider_option(
+        name="Lightweight Factor",
+        description="How much to decrease the opacity of lightweight elements for",
+        scope="DaylaRush+",
+        default=0.5,
+        min=0,
+        max=1,
+        step=0.1,
+    )
     note_perspective: int = select_option(
         name="v3 Sekai Perspective",
         description="Uses the v3 SEKAI style for note perspective. Auto will disable Sekai perspective if the skin is not set to V3. ",
