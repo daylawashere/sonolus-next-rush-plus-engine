@@ -30,6 +30,7 @@ from sekai.lib.level_config import LevelConfig
 from sekai.lib.options import Options, SekaiVersion, SkillMode
 from sekai.lib.particle import ActiveParticles
 from sekai.lib.skin import ActiveSkin
+from sonolus.script.easing import ease_out_quad
 
 
 @level_memory
@@ -241,7 +242,7 @@ def draw_skill_bar(z: float, z2: float, time: float, num: int, effect: SkillMode
     enter_progress = unlerp_clamped(0, 0.25, time)
     exit_progress = unlerp_clamped(3.75, 4, time)
 
-    anim = enter_progress - exit_progress
+    anim = ease_out_quad(enter_progress - exit_progress)
 
     layout = +Quad
     x_ratio = 0
@@ -304,13 +305,13 @@ def draw_skill_bar(z: float, z2: float, time: float, num: int, effect: SkillMode
         current_start_pos = +Vec2
         if time >= 1.75 and time < 3:
             current_start_pos @= text_changing_center
-            final_anim = mid_progress
+            final_anim = ease_out_quad(mid_progress)
         else:
             current_start_pos @= text_start_center
             if time < 1.75:
-                final_anim = enter_progress
+                final_anim = ease_out_quad(enter_progress)
             else:
-                final_anim = mid_progress - exit_progress
+                final_anim = ease_out_quad(mid_progress - exit_progress)
         text_current_center = lerp(current_start_pos, text_target_center, final_anim)
         h = 0.027
         w = h * 14
