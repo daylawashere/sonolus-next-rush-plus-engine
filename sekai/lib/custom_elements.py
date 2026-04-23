@@ -19,6 +19,7 @@ from sekai.lib.layout import (
 )
 from sekai.lib.level_config import LevelConfig
 from sekai.lib.options import Options, SekaiVersion
+from sekai.lib.particle import ActiveParticles
 from sekai.lib.skin import (
     ActiveSkin,
 )
@@ -502,7 +503,14 @@ def draw_damage_flash(draw_time: float, z: float):
                 tl=Vec2(l_val, t_val),
                 tr=Vec2(0, t_val),
             )
-            ActiveSkin.damage_flash.draw(quad=layout, z=z, a=a * 0.8)
+            match Options.lightweight:
+                case 1:
+                    lightweight = 0.5
+                case 2:
+                    lightweight = 0.5 if ActiveParticles.lightweight.is_available else 1
+                case _:
+                    lightweight = 1
+            ActiveSkin.damage_flash.draw(quad=layout, z=z, a=a * 0.8 * lightweight)
 
 
 def draw_life_number(number: int, z: float, alpha: float = 1.0):
@@ -656,7 +664,7 @@ def draw_score_bar_raw_number(number: int, z: float, time: float, alpha: float =
         return
     if floor(number) == 0:
         return
-
+    
     ui = runtime_ui()
 
     if number == 0:
