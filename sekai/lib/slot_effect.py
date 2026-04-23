@@ -29,9 +29,9 @@ def draw_slot_glow_effect(
     a = lerp(1, 0, progress)
     match Options.lightweight:
         case 1:
-            lightweight = 0.5
+            lightweight = Options.lightweight_factor
         case 2:
-            lightweight = 0.5 if ActiveParticles.lightweight.is_available else 1
+            lightweight = Options.lightweight_factor if ActiveParticles.lightweight.is_available else 1
         case _:
             lightweight = 1
     sprite.draw(layout, z=z, a=a * lightweight)
@@ -50,9 +50,9 @@ def draw_slot_effect(
     a = lerp(1, 0, progress)
     match Options.lightweight:
         case 1:
-            lightweight = 0.5
+            lightweight = Options.lightweight_factor
         case 2:
-            lightweight = 0.5 if ActiveParticles.lightweight.is_available else 1
+            lightweight = Options.lightweight_factor if ActiveParticles.lightweight.is_available else 1
         case _:
             lightweight = 1
     sprite.draw(layout, z=z, a=a * lightweight)
