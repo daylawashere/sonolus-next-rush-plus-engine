@@ -1166,6 +1166,8 @@ def get_note_bucket(kind: NoteKind) -> Bucket:
 def get_leniency(kind: NoteKind) -> float:
     if kind == NoteKind.DAMAGE:
         return 0.0
+    if Options.strict_judgement:
+        return 0.4
     # For notes without input, this value doesn't matter
     return 1.0
 
