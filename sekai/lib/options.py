@@ -71,6 +71,12 @@ class Options:
         scope="DaylaRush+",
         default=False,
     )
+    strict_judgement: bool = toggle_option(
+        name="Strict Hitboxes",
+        description="Makes hitboxes stricter, more alike to how it was in older versions of the game.",
+        scope="DaylaRush+",
+        default=False,
+    )
     debug_stuff: int = select_option(
         name="Debug",
         scope="DaylaRush+",
