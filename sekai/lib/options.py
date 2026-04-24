@@ -102,7 +102,7 @@ class Options:
         default=0.5,
         min=0,
         max=1,
-        step=0.1,
+        step=0.05,
     )
     note_perspective: int = select_option(
         name="v3 Sekai Perspective",
