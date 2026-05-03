@@ -52,7 +52,18 @@ class SekaiVersion(IntEnum):
     v3 = 0
     v1 = 1
 
+class FlickMod(IntEnum):
+    NONE = 0
+    MORE_FLICKS = 1
+    EVEN_MORE_FLICKS = 2
+    NO_FLICKS = 3
+    FLICK_TO_TRACE_FLICK = 4
 
+class TraceMod(IntEnum):
+    NONE = 0
+    MORE_TRACES = 1
+    EVEN_MORE_TRACES = 2
+    
 @options
 class Options:
     speed: float = slider_option(
@@ -160,6 +171,30 @@ class Options:
         min=0.05,
         max=250,
         step=0.05,
+    )
+    flick_mod: FlickMod = select_option(
+        name="Flick Mod",
+        scope="Next Sekai Arc",
+        default=FlickMod.NONE,
+        values=[
+            "None",
+            "More Flicks",
+            "Even More Flicks",
+            "No Flicks",
+            "Flicks to Trace Flicks",
+        ],
+        standard=True,
+    )
+    trace_mod: TraceMod = select_option(
+        name="Trace Mod",
+        scope="Next Sekai Arc",
+        default=TraceMod.NONE,
+        values=[
+            "None",
+            "More Traces",
+            "Even More Traces",
+        ],
+        standard=True,
     )
     note_speed: float = slider_option(
         name=StandardText.NOTE_SPEED,
