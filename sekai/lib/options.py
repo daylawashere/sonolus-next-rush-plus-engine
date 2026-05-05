@@ -63,6 +63,11 @@ class TraceMod(IntEnum):
     NONE = 0
     MORE_TRACES = 1
     EVEN_MORE_TRACES = 2
+
+class CriticalMod(IntEnum):
+    NONE = 0
+    ALL_CRITICAL = 1
+    ALL_NORMAL = 2
     
 @options
 class Options:
@@ -193,6 +198,17 @@ class Options:
             "None",
             "More Traces",
             "Even More Traces",
+        ],
+        standard=True,
+    )
+    critical_mod: CriticalMod = select_option(
+        name="Critical Mod",
+        scope="Next Sekai Arc",
+        default=CriticalMod.NONE,
+        values=[
+            "None",
+            "All Critical",
+            "No Critical",
         ],
         standard=True,
     )
