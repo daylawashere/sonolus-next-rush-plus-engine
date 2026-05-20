@@ -1079,7 +1079,7 @@ def layout_note_body_by_edges(l: float, r: float, h: float, travel: float, not_s
         case 1:
             p = 0.5 if not not_sekai_p else 1
         case 2:
-            p = 0.5 if not not_sekai_p and LevelConfig.ui_version == Version.v3 else 1 
+            perspective = 0.5 if LevelConfig.ui_version == Version.v3 else 1 
         case _:
             p = 1
     
