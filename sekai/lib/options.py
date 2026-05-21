@@ -183,11 +183,21 @@ class Options:
         max=250,
         step=0.05,
     )
-    gauge_mult: bool = toggle_option(
+    enable_gauge_mult: int = select_option(
         name="Match Gauge to Multiplier",
-        description="Multiplies gauge levels by score mult option.",
+        description="Multiplies gauge levels by score mult option or specific number.",
         scope="DaylaRush+",
-        default=False,
+        default=0,
+        values=["Disable", "Score Mult", "Gauge Mult"],
+    )
+    gauge_mult: float = slider_option(
+        name="Gauge Multiplier",
+        description="Multiplies score if Gauge Mult is enabled",
+        scope="DaylaRush+",
+        default=1,
+        min=0.05,
+        max=250,
+        step=0.05,
     )
     flick_mod: FlickMod = select_option(
         name="Flick Mod",

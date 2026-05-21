@@ -1101,7 +1101,13 @@ def draw_score_bar(
 
 
 def get_gauge_progress(score):
-    score_mult = Options.score_mult if Options.gauge_mult else 1
+    match Options.enable_gauge_mult:
+        case 1:
+            score_mult= Options.score_mult
+        case 2:
+            score_mult= Options.gauge_mult
+        case _:
+            score_mult= 1
     xp = (
         0 * score_mult, 
         20000 * score_mult, 
@@ -1122,8 +1128,13 @@ def get_gauge_progress(score):
 
 
 def get_score_rank(score):
-    if Options.gauge_mult:
-        score = score / Options.score_mult
+    match Options.enable_gauge_mult:
+        case 1:
+            score= score / Options.score_mult
+        case 2:
+            score= score / Options.gauge_mult
+        case _:
+            score= score
     if score >= 1150000:
         return ScoreRankType.S
     elif score >= 940000:
