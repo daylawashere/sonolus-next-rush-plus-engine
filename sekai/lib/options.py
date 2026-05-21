@@ -188,6 +188,12 @@ class Options:
         max=250,
         step=0.05,
     )
+    gauge_mult: bool = toggle_option(
+        name="Match Gauge to Multiplier",
+        description="Multiplies gauge levels by score mult option.",
+        scope="DaylaRush+",
+        default=False,
+    )
     flick_mod: FlickMod = select_option(
         name="Flick Mod",
         scope="Next Sekai Arc",
