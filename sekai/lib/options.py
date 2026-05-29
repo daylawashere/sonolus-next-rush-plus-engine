@@ -82,14 +82,14 @@ class Options:
         standard=True,
         advanced=True,
         default=1,
-        min=0.5,
-        max=2,
-        step=0.05,
+        min=0.01,
+        max=5,
+        step=0.01,
         unit=StandardText.PERCENTAGE_UNIT,
     )
     cap_weight_mult: bool = toggle_option(
         name="Limit Weight Multiplier",
-        description="Limits the Song Weight Multiplier, not needed usually.",
+        description="Caps out the weight multiplier, for songs with a large amount of notes.",
         scope="DaylaRush+",
         default=False,
     )
