@@ -92,23 +92,35 @@ class Options:
         step=0.01,
         unit=StandardText.PERCENTAGE_UNIT,
     )
-    cap_weight_mult: bool = toggle_option(
-        name="Limit Weight Multiplier",
-        description="Caps out the weight multiplier, for songs with a large amount of notes.",
+    note_match_speed: bool = toggle_option(
+        name="Note Match Speed",
+        description="Keeps note distance relative to the level speed.",
         scope="DaylaRush+",
         default=False,
     )
-    strict_judgement: bool = toggle_option(
-        name="Strict Hitboxes",
-        description="Makes hitboxes stricter, more alike to how it was in older versions of the game.",
-        scope="DaylaRush+",
-        default=False,
+    note_speed: float = slider_option(
+        name=StandardText.NOTE_SPEED,
+        scope="Sekai",
+        default=6,
+        min=1,
+        max=12,
+        step=0.01,
     )
-    debug_stuff: int = select_option(
-        name="Debug",
-        scope="DaylaRush+",
+    stage_cover: float = slider_option(
+        name=StandardText.STAGE_COVER_VERTICAL,
+        advanced=True,
+        scope="Sekai",
         default=0,
-        values=["Disable", "Song Weight", "Unprocessed Weight"],
+        min=0,
+        max=1,
+        step=0.01,
+        unit=StandardText.PERCENTAGE_UNIT,
+    )
+    talent_enabled: bool = toggle_option(
+        name="Enable Talent",
+        description="Emulates team power and song scoring system from Sekai.",
+        scope="DaylaRush+",
+        default=True,
     )
     lightweight: int = select_option(
         name="Lightweight Slot",
@@ -131,131 +143,6 @@ class Options:
         scope="Rush",
         default=2,
         values=["Disable", "Enabled", "Auto"],
-    )
-    talent_enabled: bool = toggle_option(
-        name="Enable Talent",
-        description="Emulates team power and song scoring system from Sekai.",
-        scope="DaylaRush+",
-        default=True,
-    )
-    talent: float = slider_option(
-        name="Team Power",
-        description="Leave at 300 for song weight scoring calculation only.",
-        scope="DaylaRush+",
-        default=300,
-        min=1,
-        max=9999,
-        step=0.0002,
-    )
-    force_score: bool = toggle_option(
-        name="Enable Force Max Score",
-        description="Make sure to disable Talent before using.",
-        scope="DaylaRush+",
-        default=False,
-    )
-    forced_score: float = slider_option(
-        name="Forced Max Score",
-        scope="DaylaRush+",
-        default=1234567,
-        min=1,
-        max=10000000,
-        step=1,
-    )
-    forced_score_2: float = slider_option(
-        name="Forced Max Score 2",
-        description="Adds onto Forced Max Score 1 to bypass certain limitations.",
-        scope="DaylaRush+",
-        default=0,
-        min=1,
-        max=10000000,
-        step=1,
-    )
-    forced_score_3: float = slider_option(
-        name="Forced Max Score 3",
-        description="Adds onto Forced Max Score 1 and 2 to bypass certain limitations.",
-        scope="DaylaRush+",
-        default=0,
-        min=0,
-        max=10000000,
-        step=1,
-    )
-    score_mult: float = slider_option(
-        name="Score Multiplier",
-        description="Multiplies score if Talent/Force Score is enabled",
-        scope="DaylaRush+",
-        default=1,
-        min=0.05,
-        max=250,
-        step=0.05,
-    )
-    enable_gauge_mult: int = select_option(
-        name="Match Gauge to Multiplier",
-        description="Multiplies gauge levels by score mult option or specific number.",
-        scope="DaylaRush+",
-        default=0,
-        values=["Disable", "Score Mult", "Gauge Mult"],
-    )
-    gauge_mult: float = slider_option(
-        name="Gauge Multiplier",
-        description="Multiplies score if Gauge Mult is enabled",
-        scope="DaylaRush+",
-        default=1,
-        min=0.05,
-        max=250,
-        step=0.05,
-    )
-    flick_mod: FlickMod = select_option(
-        name="Flick Mod",
-        scope="Next Sekai Arc",
-        default=FlickMod.NONE,
-        values=[
-            "None",
-            "More Flicks",
-            "Even More Flicks",
-            "No Flicks",
-            "Flicks to Trace Flicks",
-        ],
-        standard=True,
-    )
-    trace_mod: TraceMod = select_option(
-        name="Trace Mod",
-        scope="Next Sekai Arc",
-        default=TraceMod.NONE,
-        values=[
-            "None",
-            "More Traces",
-            "Even More Traces",
-        ],
-        standard=True,
-    )
-    critical_mod: CriticalMod = select_option(
-        name="Critical Mod",
-        scope="Next Sekai Arc",
-        default=CriticalMod.NONE,
-        values=[
-            "None",
-            "All Critical",
-            "No Critical",
-        ],
-        standard=True,
-    )
-    note_speed: float = slider_option(
-        name=StandardText.NOTE_SPEED,
-        scope="Sekai",
-        default=6,
-        min=1,
-        max=12,
-        step=0.01,
-    )
-    stage_cover: float = slider_option(
-        name=StandardText.STAGE_COVER_VERTICAL,
-        advanced=True,
-        scope="Sekai",
-        default=0,
-        min=0,
-        max=1,
-        step=0.01,
-        unit=StandardText.PERCENTAGE_UNIT,
     )
     slide_alpha: float = slider_option(
         name="Slide Alpha",
@@ -423,6 +310,125 @@ class Options:
         max=2,
         step=0.05,
         unit=StandardText.PERCENTAGE_UNIT,
+    )
+    cap_weight_mult: bool = toggle_option(
+        name="Limit Weight Multiplier",
+        description="Caps out the weight multiplier, for songs with a large amount of notes.",
+        scope="DaylaRush+",
+        default=False,
+    )
+    strict_judgement: bool = toggle_option(
+        name="Strict Hitboxes",
+        description="Makes hitboxes stricter, more alike to how it was in older versions of the game.",
+        scope="DaylaRush+",
+        default=False,
+    )
+    debug_stuff: int = select_option(
+        name="Debug",
+        scope="DaylaRush+",
+        default=0,
+        values=["Disable", "Song Weight", "Unprocessed Weight"],
+    )
+    talent: float = slider_option(
+        name="Team Power",
+        description="Leave at 300 for song weight scoring calculation only.",
+        scope="DaylaRush+",
+        default=300,
+        min=1,
+        max=9999,
+        step=0.0002,
+    )
+    force_score: bool = toggle_option(
+        name="Enable Force Max Score",
+        description="Make sure to disable Talent before using.",
+        scope="DaylaRush+",
+        default=False,
+    )
+    forced_score: float = slider_option(
+        name="Forced Max Score",
+        scope="DaylaRush+",
+        default=1234567,
+        min=1,
+        max=10000000,
+        step=1,
+    )
+    forced_score_2: float = slider_option(
+        name="Forced Max Score 2",
+        description="Adds onto Forced Max Score 1 to bypass certain limitations.",
+        scope="DaylaRush+",
+        default=0,
+        min=1,
+        max=10000000,
+        step=1,
+    )
+    forced_score_3: float = slider_option(
+        name="Forced Max Score 3",
+        description="Adds onto Forced Max Score 1 and 2 to bypass certain limitations.",
+        scope="DaylaRush+",
+        default=0,
+        min=0,
+        max=10000000,
+        step=1,
+    )
+    score_mult: float = slider_option(
+        name="Score Multiplier",
+        description="Multiplies score if Talent/Force Score is enabled",
+        scope="DaylaRush+",
+        default=1,
+        min=0.05,
+        max=250,
+        step=0.05,
+    )
+    enable_gauge_mult: int = select_option(
+        name="Match Gauge to Multiplier",
+        description="Multiplies gauge levels by score mult option or specific number.",
+        scope="DaylaRush+",
+        default=0,
+        values=["Disable", "Score Mult", "Gauge Mult"],
+    )
+    gauge_mult: float = slider_option(
+        name="Gauge Multiplier",
+        description="Multiplies score if Gauge Mult is enabled",
+        scope="DaylaRush+",
+        default=1,
+        min=0.05,
+        max=250,
+        step=0.05,
+    )
+    flick_mod: FlickMod = select_option(
+        name="Flick Mod",
+        scope="Next Sekai Arc",
+        default=FlickMod.NONE,
+        values=[
+            "None",
+            "More Flicks",
+            "Even More Flicks",
+            "No Flicks",
+            "Flicks to Trace Flicks",
+        ],
+        standard=True,
+    )
+    trace_mod: TraceMod = select_option(
+        name="Trace Mod",
+        scope="Next Sekai Arc",
+        default=TraceMod.NONE,
+        values=[
+            "None",
+            "More Traces",
+            "Even More Traces",
+        ],
+        standard=True,
+    )
+    critical_mod: CriticalMod = select_option(
+        name="Critical Mod",
+        scope="Next Sekai Arc",
+        default=CriticalMod.NONE,
+        values=[
+            "None",
+            "All Critical",
+            "No Critical",
+        ],
+        standard=True,
     )
     marker_animation: bool = toggle_option(
         name=StandardText.MARKER_ANIMATION,
