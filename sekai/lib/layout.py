@@ -522,9 +522,10 @@ def progress_to(
 
 
 def preempt_time(force_speed: float = 0) -> float:
+    div = Options.speed if Options.note_match_speed else 1
     if force_speed > 0:
-        return lerp(0.35, 4, unlerp(12, 1, force_speed) ** 1.31)
-    raw = lerp(0.35, 4, unlerp(12, 1, Options.note_speed) ** 1.31)
+        return lerp(0.35, 4, unlerp(12, 1, force_speed) ** 1.31) / div
+    raw = lerp(0.35, 4, unlerp(12, 1, Options.note_speed) ** 1.31) / div
     if Options.stage_cover_scroll_speed_compensation == StageCoverNoteSpeedCompensation.FIXED_ONLY:
         return raw * (1 - Layout.approach_start)
     return raw
