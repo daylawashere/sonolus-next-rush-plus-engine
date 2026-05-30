@@ -457,6 +457,8 @@ def draw_stage_and_accessories(
             score = weight * 100
         case 2:
             score = unprocessed_weight
+        case 3:
+            score = 1 if LevelConfig.particle_version == Version.v1 else 3
     ui_alpha = 1.0
     if Options.ui_intro and time() < -1.0:
         ui_alpha = unlerp_clamped(-2.0, -1.0, time())

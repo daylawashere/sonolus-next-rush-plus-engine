@@ -139,6 +139,15 @@ class Options:
         default=2,
         values=["Disable", "Enabled", "Auto"],
     )
+    perspective_mult: float = slider_option(
+        name="Perspective multiplier",
+        description="look i cant find a conclusive value this is what you get. a fucking slider",
+        scope="DaylaRush+",
+        default=1,
+        min=0,
+        max=1,
+        step=0.1,
+    )
     slide_alpha: float = slider_option(
         name="Slide Alpha",
         scope="Sekai",
@@ -322,7 +331,7 @@ class Options:
         name="Debug",
         scope="DaylaRush+",
         default=0,
-        values=["Disable", "Song Weight", "Unprocessed Weight"],
+        values=["Disable", "Song Weight", "Unprocessed Weight", "Particle Version"],
     )
     talent: float = slider_option(
         name="Team Power",
