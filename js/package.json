@@ -2,10 +2,10 @@
   "name": "sonolus-next-rush-engine",
   "version": "0.0.0",
   "description": "Perspective-lane rhythm game for Sonolus",
-  "author": "Hyeon2",
+  "author": "Dayla",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/UntitledCharts/sonolus-next-rush-engine.git"
+    "url": "git+https://github.com/daylawashere/sonolus-next-rush-engine.git"
   },
   "license": "MIT",
   "keywords": [
