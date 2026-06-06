@@ -29,13 +29,13 @@ class WatchSlotGlowEffect(WatchArchetype):
     generation_set: bool = entity_memory()
 
     def initialize(self):
-        self.end_time = self.start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed
+        self.end_time = self.start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
 
     def spawn_time(self) -> float:
         return self.start_time
 
     def despawn_time(self) -> float:
-        return self.start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed
+        return self.start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
 
     def update_sequential(self):
         if is_skip():
@@ -76,13 +76,13 @@ class WatchSlotEffect(WatchArchetype):
     generation_set: bool = entity_memory()
 
     def initialize(self):
-        self.end_time = self.start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed
+        self.end_time = self.start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
 
     def spawn_time(self) -> float:
         return self.start_time
 
     def despawn_time(self) -> float:
-        return self.start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed
+        return self.start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
 
     def update_sequential(self):
         if is_skip():

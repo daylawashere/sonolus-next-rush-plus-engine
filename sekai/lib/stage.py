@@ -1135,4 +1135,4 @@ def play_lane_particle(lane: float):
             return
         else:
             layout = layout_particle_lane(lane, 0.5)
-            ActiveParticles.lane.spawn(layout, duration=0.3 / Options.effect_animation_speed)
+            ActiveParticles.lane.spawn(layout, duration=0.3 / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1))

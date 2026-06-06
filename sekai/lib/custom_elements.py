@@ -98,7 +98,7 @@ def draw_combo_label(ap: bool, combo: int):
     base_h = 0.04225 * ui.combo_config.scale
     base_w = base_h * 3.22 * 6.65
     h, w = transform_fixed_size(base_h, base_w)
-    a = ui.combo_config.alpha * 0.8 * (cos(time() * pi) + 1) / 2
+    a = ui.combo_config.alpha * 0.8 * (cos((time() / (Options.speed if Options.ui_match_speed else 1)) * pi) + 1) / 2
     layout = layout_combo_label(screen_center, w=w / 2, h=h / 2)
     if ap or not Options.ap_effect:
         ActiveSkin.combo_label.get_sprite(ComboType.NORMAL).draw(
@@ -141,16 +141,16 @@ def draw_combo_number(draw_time: float, ap: bool, combo: int):
     base_w = base_h * 0.79 * 7
     base_w2 = base_h2 * 0.79 * 7
 
-    s = 0.6 + 0.4 * unlerp_clamped(draw_time, draw_time + 0.112, time())
-    s2 = 0.762 + 0.231 * unlerp_clamped(draw_time + 0.112, draw_time + 0.192, time())
+    s = 0.6 + 0.4 * unlerp_clamped(draw_time, draw_time + (0.112 / (Options.speed if Options.ui_match_speed else 1)), time())
+    s2 = 0.762 + 0.231 * unlerp_clamped(draw_time + (0.112 / (Options.speed if Options.ui_match_speed else 1)), draw_time + (0.192 / (Options.speed if Options.ui_match_speed else 1)), time())
 
     a = ui.combo_config.alpha
     a2 = (
-        ui.combo_config.alpha * unlerp(draw_time + 0.192, draw_time + 0.112, time())
-        if time() >= draw_time + 0.112
+        ui.combo_config.alpha * unlerp(draw_time + (0.192 / (Options.speed if Options.ui_match_speed else 1)), draw_time + (0.112 / (Options.speed if Options.ui_match_speed else 1)), time())
+        if time() >= draw_time + (0.112 / (Options.speed if Options.ui_match_speed else 1))
         else 0
     )
-    a3 = ui.combo_config.alpha * 0.8 * (cos(time() * pi) + 1) / 2
+    a3 = ui.combo_config.alpha * 0.8 * (cos((time() / (Options.speed if Options.ui_match_speed else 1)) * pi) + 1) / 2
 
     h, w = transform_fixed_size(base_h, base_w)
     h2, w2 = transform_fixed_size(base_h2, base_w2)
@@ -706,13 +706,13 @@ def draw_score_bar_raw_number(number: int, z: ZIndex, time: float, alpha: float 
     digit_gap = 0
     match LevelConfig.ui_version:
         case Version.v3:
-            margin_offset = 0.585 + (0.452 - 0.56) * ease_out_quad(clamp(time / 0.2, 0, 1))
+            margin_offset = 0.585 + (0.452 - 0.56) * ease_out_quad(clamp(time / (0.2 / (Options.speed if Options.ui_match_speed else 1)), 0, 1))
             y_offset = -0.095
             h = 0.06 * ui.primary_metric_config.scale * scale_ratio
             w = h * 0.705
             digit_gap = w * -0.04
         case Version.v1:
-            margin_offset = 0.545 + (0.442 - 0.51) * clamp(time / 0.2, 0, 1)
+            margin_offset = 0.545 + (0.442 - 0.51) * ease_out_quad(clamp(time / (0.2 / (Options.speed if Options.ui_match_speed else 1)), 0, 1))
             y_offset = -0.073
             h = 0.08 * ui.primary_metric_config.scale * scale_ratio
             w = h * 0.705
@@ -737,7 +737,7 @@ def draw_score_bar_raw_number(number: int, z: ZIndex, time: float, alpha: float 
         ),
         layout=UILayoutConfig(width=w, gap=digit_gap, height=h, start_x=screen_center.x, alignment=UIAlignment.LEFT),
     )
-    a = clamp(time / 0.2, 0, 1) * alpha
+    a = clamp(time / (0.2 / (Options.speed if Options.ui_match_speed else 1)), 0, 1) * alpha
     drawing_ui.draw_number(z=z, a=a)
 
 

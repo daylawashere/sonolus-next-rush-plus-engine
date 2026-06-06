@@ -458,6 +458,18 @@ class Options:
         scope="Sekai",
         default=True,
     )
+    ui_match_speed: bool = toggle_option(
+        name="UI Match Speed",
+        description="Keeps UI speed relative to the level speed.",
+        scope="DaylaRush+",
+        default=False,
+    )
+    effects_match_speed: bool = toggle_option(
+        name="Effect Match Speed",
+        description="Keeps Effect speed relative to the level speed.",
+        scope="DaylaRush+",
+        default=False,
+    )
     slot_effect_size: float = slider_option(
         name=StandardText.SLOT_EFFECT_SIZE,
         scope="Sekai",
@@ -497,7 +509,7 @@ class Options:
             "Fixed Only",
             "Full",
         ],
-        default=1,
+        default=0,
     )
     hidden: float = slider_option(
         name=StandardText.HIDDEN,

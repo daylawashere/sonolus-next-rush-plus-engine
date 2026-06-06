@@ -323,14 +323,14 @@ class WatchSlideManager(WatchArchetype):
                     replace,
                     info.visual_y_offset,
                 )
-                trail_period = CONNECTOR_TRAIL_SPAWN_PERIOD / Options.effect_animation_speed
+                trail_period = CONNECTOR_TRAIL_SPAWN_PERIOD / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
                 if current_time >= self.next_trail_spawn_time:
                     self.next_trail_spawn_time = max(
                         self.next_trail_spawn_time + trail_period,
                         current_time + trail_period / 2,
                     )
                     spawn_linear_connector_trail_particle(connector_kind, info.visual_lane, info.visual_y_offset)
-                slot_period = CONNECTOR_SLOT_SPAWN_PERIOD / Options.effect_animation_speed
+                slot_period = CONNECTOR_SLOT_SPAWN_PERIOD / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
                 if current_time >= self.next_slot_spawn_time:
                     self.next_slot_spawn_time = max(
                         self.next_slot_spawn_time + slot_period,

@@ -28,7 +28,7 @@ class SlotGlowEffect(PlayArchetype):
     generation_set: bool = entity_memory()
 
     def initialize(self):
-        self.end_time = self.start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed
+        self.end_time = self.start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
 
     def update_sequential(self):
         if self.despawn or self.generation_set:
@@ -63,7 +63,7 @@ class SlotEffect(PlayArchetype):
     generation_set: bool = entity_memory()
 
     def initialize(self):
-        self.end_time = self.start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed
+        self.end_time = self.start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
 
     def update_sequential(self):
         if self.despawn or self.generation_set:

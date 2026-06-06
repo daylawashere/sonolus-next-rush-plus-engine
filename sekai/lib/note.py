@@ -1461,7 +1461,7 @@ def handle_note_particles(
         # An avoided damage note (perfect) plays no particles.
         return
     particles = get_note_particles(kind, direction)
-    speed = Options.effect_animation_speed
+    speed = Options.effect_animation_speed * (Options.speed if Options.effects_match_speed else 1) 
     if Options.note_effect_enabled:
         linear_particle = particles.get_linear(judgment)
         if linear_particle.is_available:
@@ -1610,7 +1610,7 @@ def _iter_bundled_slot_lanes(lane: float, size: float, pivot_lane: float = 0.0, 
 
 
 def _emit_critical_flick_lane(particle, center_lane: float, size: float, y_offset: float, chunk: float, managed: bool):
-    speed = Options.effect_animation_speed
+    speed = Options.effect_animation_speed * (Options.speed if Options.effects_match_speed else 1)
     min_i = floor(center_lane - size)
     max_i = ceil(center_lane + size) - 1
 
@@ -1775,23 +1775,23 @@ def draw_tutorial_note_slot_effects(
 ):
     sprite_set = get_note_sprite_set(kind, direction)
     slot_sprite = sprite_set.slot
-    if slot_sprite.is_available and time() < start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed:
+    if slot_sprite.is_available and time() < start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1):
         for slot_lane in iter_slot_lanes(lane, size, pivot_lane=pivot_lane, half_offset=half_offset):
             draw_slot_effect(
                 sprite=slot_sprite,
                 start_time=start_time,
-                end_time=start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed,
+                end_time=start_time + SLOT_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1),
                 lane=slot_lane,
             )
     slot_glow_sprite = sprite_set.slot_glow.perfect
     if (
         slot_glow_sprite.is_available
-        and time() < start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed
+        and time() < start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1)
     ):
         draw_slot_glow_effect(
             sprite=slot_glow_sprite,
             start_time=start_time,
-            end_time=start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed,
+            end_time=start_time + SLOT_GLOW_EFFECT_DURATION / Options.effect_animation_speed / (Options.speed if Options.effects_match_speed else 1),
             lane=lane,
             size=size,
         )
