@@ -92,6 +92,10 @@ class Options:
         step=0.01,
         unit=StandardText.PERCENTAGE_UNIT,
     )
+    mirror: bool = toggle_option(
+        name=StandardText.MIRROR,
+        default=False,
+    )
     note_match_speed: bool = toggle_option(
         name="Note Match Speed",
         description="Keeps note distance relative to the level speed.",
@@ -118,40 +122,9 @@ class Options:
     )
     talent_enabled: bool = toggle_option(
         name="Enable Talent",
-        description="Emulates team power and song scoring system from Sekai.",
+        description="Emulates a team power and song scoring system.",
         scope="DaylaRush+",
         default=True,
-    )
-    lightweight: int = select_option(
-        name="Lightweight Slot",
-        scope="DaylaRush+",
-        default=2,
-        values=["Disable", "Enabled", "Auto"],
-    )
-    lightweight_factor: float = slider_option(
-        name="Lightweight Factor",
-        description="How much to decrease the opacity of lightweight elements for",
-        scope="DaylaRush+",
-        default=0.5,
-        min=0,
-        max=1,
-        step=0.05,
-    )
-    note_perspective: int = select_option(
-        name="v3 Sekai Perspective",
-        description="Uses the v3 SEKAI style for note perspective. Auto will disable Sekai perspective if the skin is not set to V3. ",
-        scope="Rush",
-        default=2,
-        values=["Disable", "Enabled", "Auto"],
-    )
-    perspective_mult: float = slider_option(
-        name="Perspective multiplier",
-        description="look i cant find a conclusive value this is what you get. a fucking slider",
-        scope="DaylaRush+",
-        default=1,
-        min=0,
-        max=1,
-        step=0.1,
     )
     slide_alpha: float = slider_option(
         name="Slide Alpha",
@@ -210,13 +183,39 @@ class Options:
         scope="Rush",
         default=True,
     )
+    lightweight: int = select_option(
+        name="Lightweight Slot",
+        scope="DaylaRush+",
+        default=2,
+        values=["Disable", "Enabled", "Auto"],
+    )
+    lightweight_factor: float = slider_option(
+        name="Lightweight Factor",
+        description="How much to decrease the opacity of lightweight elements for",
+        scope="DaylaRush+",
+        default=0.3,
+        min=0,
+        max=1,
+        step=0.05,
+    )
+    note_perspective: int = select_option(
+        name="Front-facing Perspective",
+        description="Uses a front-facing style for note perspective.",
+        scope="DaylaRush",
+        default=2,
+        values=["Disable", "Enabled", "Auto"],
+    )
+    perspective_mult: float = slider_option(
+        name="Front-facing Perspective multiplier",
+        scope="DaylaRush+",
+        default=1,
+        min=0,
+        max=1,
+        step=0.1,
+    )
     custom_accuracy: bool = toggle_option(
         name="Late/Fast/Flick",
         scope="Rush",
-        default=False,
-    )
-    mirror: bool = toggle_option(
-        name=StandardText.MIRROR,
         default=False,
     )
     custom_combo: bool = toggle_option(
