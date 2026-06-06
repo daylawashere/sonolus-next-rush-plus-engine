@@ -22,6 +22,7 @@ engine = Engine(
         preview=preview_mode,
         tutorial=tutorial_mode,
     ),
+    description="@l0vel4ce_ on tiktok. https://github.com/daylawashere/sonolus-next-rush-plus-engine"
 )
 
 project = Project(
