@@ -479,7 +479,8 @@ def draw_basic_stage(alpha=1.0):
     if not Options.show_lane:
         return
     if (
-        ActiveSkin.sekai_stage_lane.is_available
+        not Options.force_dynamic_stage
+        and ActiveSkin.sekai_stage_lane.is_available
         and ActiveSkin.sekai_stage_cover.is_available
         and not LevelConfig.dynamic_stages
     ):

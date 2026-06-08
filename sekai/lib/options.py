@@ -325,11 +325,16 @@ class Options:
         scope="DaylaRush+",
         default=False,
     )
-    strict_judgement: bool = toggle_option(
-        name="Strict Hitboxes",
-        description="Makes hitboxes stricter, more alike to how it was in older versions of the game.",
+    note_leniency: float = slider_option(
+        name="Note Leniency",
         scope="DaylaRush+",
-        default=False,
+        description="0 for accurate hitboxes, 0.5 for v1 style, 1 for default",
+        default=1,
+        min=0,
+        max=1,
+        step=0.1,
+        standard=True,
+        advanced=True,
     )
     debug_stuff: int = select_option(
         name="Debug",
@@ -402,6 +407,22 @@ class Options:
         min=0.05,
         max=250,
         step=0.05,
+    )
+    force_dynamic_stage: bool = toggle_option(
+        name="Force Dynamic Stage",
+        description="Allows the option below to be used.",
+        scope="DaylaRush+",
+        default=False,
+    )
+    default_stage_tilt: float = slider_option(
+        name="Stage Tilt Mult",
+        scope="DaylaRush+",
+        default=1,
+        min=0,
+        max=1,
+        step=0.1,
+        standard=True,
+        advanced=True,
     )
     flick_mod: FlickMod = select_option(
         name="Flick Mod",
