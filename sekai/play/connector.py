@@ -13,6 +13,7 @@ from sekai.debug import DISABLE_NOTES
 from sekai.lib import archetype_names
 from sekai.lib.connector import (
     CONNECTOR_LENIENCY,
+    CONNECTOR_PARTICLE_ACTIVE_DELAY,
     CONNECTOR_SLOT_SPAWN_PERIOD,
     CONNECTOR_THROUGH_JUDGE_LINE_DESPAWN_DELAY,
     CONNECTOR_TRAIL_SPAWN_PERIOD,
@@ -482,48 +483,57 @@ class SlideManager(PlayArchetype):
                 | ConnectorKind.ACTIVE_FAKE_NORMAL
                 | ConnectorKind.ACTIVE_FAKE_CRITICAL
             ) if info.is_active:
-                replace = info.connector_kind != self.last_kind
-                self.last_kind = info.connector_kind
-                update_circular_connector_particle(
-                    self.circular_particle,
-                    info.connector_kind,
-                    info.visual_lane,
-                    replace,
-                    info.visual_y_offset,
-                )
-                update_linear_connector_particle(
-                    self.linear_particle,
-                    info.connector_kind,
-                    info.visual_lane,
-                    replace,
-                    info.visual_y_offset,
-                )
-                if self.last_effect_kind != info.connector_kind:
-                    connector_effect_kind_stream[adj_time] = info.connector_kind
-                    self.last_effect_kind = info.connector_kind
-                trail_period = CONNECTOR_TRAIL_SPAWN_PERIOD / Options.effect_animation_speed
-                if current_time >= self.next_trail_spawn_time:
-                    self.next_trail_spawn_time = max(
-                        self.next_trail_spawn_time + trail_period,
-                        current_time + trail_period / 2,
+                if current_time < info.active_start_time + CONNECTOR_PARTICLE_ACTIVE_DELAY:
+                    destroy_looped_particle(self.circular_particle)
+                    destroy_looped_particle(self.linear_particle)
+                    if self.last_effect_kind != ConnectorKind.NONE:
+                        connector_effect_kind_stream[adj_time] = ConnectorKind.NONE
+                        self.last_effect_kind = ConnectorKind.NONE
+                else:
+                    replace = info.connector_kind != self.last_kind
+                    self.last_kind = info.connector_kind
+                    update_circular_connector_particle(
+                        self.circular_particle,
+                        info.connector_kind,
+                        info.visual_lane,
+                        replace,
+                        info.visual_y_offset,
                     )
-                    spawn_linear_connector_trail_particle(info.connector_kind, info.visual_lane, info.visual_y_offset)
-                slot_period = CONNECTOR_SLOT_SPAWN_PERIOD / Options.effect_animation_speed
-                if current_time >= self.next_slot_spawn_time:
-                    self.next_slot_spawn_time = max(
-                        self.next_slot_spawn_time + slot_period,
-                        current_time + slot_period / 2,
+                    update_linear_connector_particle(
+                        self.linear_particle,
+                        info.connector_kind,
+                        info.visual_lane,
+                        replace,
+                        info.visual_y_offset,
                     )
-                    spawn_connector_slot_particles(
-                        info.connector_kind, info.visual_lane, info.visual_size, info.visual_y_offset
+                    if self.last_effect_kind != info.connector_kind:
+                        connector_effect_kind_stream[adj_time] = info.connector_kind
+                        self.last_effect_kind = info.connector_kind
+                    trail_period = CONNECTOR_TRAIL_SPAWN_PERIOD / Options.effect_animation_speed
+                    if current_time >= self.next_trail_spawn_time:
+                        self.next_trail_spawn_time = max(
+                            self.next_trail_spawn_time + trail_period,
+                            current_time + trail_period / 2,
+                        )
+                        spawn_linear_connector_trail_particle(
+                            info.connector_kind, info.visual_lane, info.visual_y_offset
+                        )
+                    slot_period = CONNECTOR_SLOT_SPAWN_PERIOD / Options.effect_animation_speed
+                    if current_time >= self.next_slot_spawn_time:
+                        self.next_slot_spawn_time = max(
+                            self.next_slot_spawn_time + slot_period,
+                            current_time + slot_period / 2,
+                        )
+                        spawn_connector_slot_particles(
+                            info.connector_kind, info.visual_lane, info.visual_size, info.visual_y_offset
+                        )
+                    draw_connector_slot_glow_effect(
+                        info.connector_kind,
+                        info.active_start_time,
+                        info.visual_lane,
+                        info.visual_size,
+                        info.visual_y_offset,
                     )
-                draw_connector_slot_glow_effect(
-                    info.connector_kind,
-                    info.active_start_time,
-                    info.visual_lane,
-                    info.visual_size,
-                    info.visual_y_offset,
-                )
             case _:
                 destroy_looped_particle(self.circular_particle)
                 destroy_looped_particle(self.linear_particle)

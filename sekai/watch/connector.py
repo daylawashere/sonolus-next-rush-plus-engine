@@ -9,6 +9,7 @@ from sekai.debug import DISABLE_NOTES
 from sekai.lib import archetype_names
 from sekai.lib.connector import (
     CONNECTOR_LENIENCY,
+    CONNECTOR_PARTICLE_ACTIVE_DELAY,
     CONNECTOR_SLOT_SPAWN_PERIOD,
     CONNECTOR_THROUGH_JUDGE_LINE_DESPAWN_DELAY,
     CONNECTOR_TRAIL_SPAWN_PERIOD,
@@ -297,6 +298,8 @@ class WatchSlideManager(WatchArchetype):
             if is_replay()
             else info.connector_kind
         )
+        if not is_replay() and current_time < self.active_head.target_time + CONNECTOR_PARTICLE_ACTIVE_DELAY:
+            connector_kind = ConnectorKind.NONE
         match connector_kind:
             case (
                 ConnectorKind.ACTIVE_NORMAL
