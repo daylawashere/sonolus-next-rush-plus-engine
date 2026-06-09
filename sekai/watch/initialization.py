@@ -14,6 +14,17 @@ from sonolus.script.runtime import is_replay, level_score
 from sekai.lib import archetype_names
 from sekai.lib.baseevent import init_event_list
 from sekai.lib.buckets import init_buckets
+from sekai.lib.connector import (
+    CONNECTOR_SFX_ACTIVE_TIME_INIT,
+    CONNECTOR_SFX_INACTIVE_TIME_INIT,
+    ActiveConnectorKind,
+    ConnectorKind,
+    connector_sfx_is_active,
+    connector_sfx_matches_kind,
+    inactive_connector_sfx_times,
+    schedule_connector_sfx,
+    schedule_connector_sfx_between,
+)
 from sekai.lib.custom_elements import LifeManager, NeumaierSum
 from sekai.lib.initialization import LastNote, calculate_note_weight, sort_entities_by_time
 from sekai.lib.layout import init_layout, init_ui_margin
@@ -31,6 +42,7 @@ from sekai.lib.stage import schedule_lane_sfx
 from sekai.lib.streams import Streams
 from sekai.lib.ui import init_ui
 from sekai.watch import custom_elements, note
+from sekai.watch.connector import WatchConnector
 from sekai.watch.dynamic_stage import WatchCameraChange
 from sekai.watch.events import Fever, Skill
 from sekai.watch.static_stage import WatchScheduledLaneEffect, WatchStaticStage
@@ -75,6 +87,17 @@ class WatchInitialization(WatchArchetype):
                 WatchScheduledLaneEffect.spawn(lane=lane, target_time=input_time)
 
         sorted_linked_list()
+        if is_replay() and not Options.auto_sfx:
+            schedule_replay_connector_sfx(
+                Streams.connector_normal_sfx_times[0],
+                ConnectorKind.ACTIVE_NORMAL,
+            )
+            schedule_replay_connector_sfx(
+                Streams.connector_critical_sfx_times[0],
+                ConnectorKind.ACTIVE_CRITICAL,
+            )
+        else:
+            schedule_auto_connector_sfx()
 
 
 def sorted_linked_list():
@@ -211,6 +234,90 @@ def setting_combo(head: int, skill: int) -> None:
         )
 
     calculate_score(head, 1000000, total_weight.total)
+
+
+def schedule_auto_connector_sfx():
+    entity_count = 0
+    while entity_info_at(entity_count).index == entity_count:
+        entity_count += 1
+    schedule_auto_connector_sfx_kind(entity_count, ConnectorKind.ACTIVE_NORMAL)
+    schedule_auto_connector_sfx_kind(entity_count, ConnectorKind.ACTIVE_CRITICAL)
+
+
+def schedule_auto_connector_sfx_kind(entity_count: int, sfx_kind: ActiveConnectorKind):
+    connector_id = WatchConnector._compile_time_id()
+    current_time = -1e8
+    active_time = CONNECTOR_SFX_ACTIVE_TIME_INIT
+    inactive_time = CONNECTOR_SFX_INACTIVE_TIME_INIT
+    active_connector_index = 0
+
+    while True:
+        next_time = 1e8
+        for i in range(entity_count):
+            info = entity_info_at(i)
+            mro = WatchArchetype._get_mro_id_array(info.archetype_id)
+            if connector_id not in mro:
+                continue
+            connector = WatchConnector.at(i)
+            if connector.active_head_ref.index <= 0:
+                continue
+            if not connector_sfx_matches_kind(connector.segment_head.segment_kind, sfx_kind):
+                continue
+            active_event_time = connector.active_head.target_time
+            inactive_event_time = connector.active_tail.target_time
+            if current_time < active_event_time < next_time:
+                next_time = active_event_time
+            if current_time < inactive_event_time < next_time:
+                next_time = inactive_event_time
+        if next_time == 1e8:
+            break
+        if active_time >= inactive_time and active_connector_index > 0:
+            active_connector = WatchConnector.at(active_connector_index)
+            schedule_connector_sfx(
+                sfx_kind,
+                active_connector.segment_head.timescale_group,
+                current_time,
+                next_time,
+            )
+        for i in range(entity_count):
+            info = entity_info_at(i)
+            mro = WatchArchetype._get_mro_id_array(info.archetype_id)
+            if connector_id not in mro:
+                continue
+            connector = WatchConnector.at(i)
+            if connector.active_head_ref.index <= 0:
+                continue
+            if not connector_sfx_matches_kind(connector.segment_head.segment_kind, sfx_kind):
+                continue
+            if connector.active_head.target_time == next_time:
+                if inactive_time == CONNECTOR_SFX_INACTIVE_TIME_INIT:
+                    inactive_time = next_time
+                active_time = next_time
+                active_connector_index = i
+            if connector.active_tail.target_time == next_time:
+                inactive_time = next_time
+        current_time = next_time
+
+    if active_time >= inactive_time and active_connector_index > 0:
+        active_connector = WatchConnector.at(active_connector_index)
+        schedule_connector_sfx(
+            sfx_kind,
+            active_connector.segment_head.timescale_group,
+            current_time,
+            LastNote.last_time,
+        )
+
+
+def schedule_replay_connector_sfx(stream, kind: ActiveConnectorKind):
+    last_times = inactive_connector_sfx_times()
+    last_time = -1e8
+    for next_time, next_times in stream.iter_items_from(-2):
+        if connector_sfx_is_active(last_times):
+            schedule_connector_sfx_between(kind, last_time, next_time)
+        last_times @= next_times
+        last_time = next_time
+    if connector_sfx_is_active(last_times):
+        schedule_connector_sfx_between(kind, last_time, LastNote.last_time)
 
 
 def calculate_score(head: int, max_score: int, total_weight: float):

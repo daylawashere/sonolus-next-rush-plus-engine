@@ -4,6 +4,15 @@ from sonolus.script.runtime import level_score
 from sekai.lib import archetype_names
 from sekai.lib.baseevent import init_event_list
 from sekai.lib.buckets import init_buckets
+from sekai.lib.connector import (
+    CONNECTOR_SFX_ACTIVE_TIME_INIT,
+    CONNECTOR_SFX_INACTIVE_TIME_INIT,
+    ActiveConnectorKind,
+    ConnectorKind,
+    connector_sfx_matches_kind,
+    init_connector_sfx_times,
+    schedule_connector_sfx,
+)
 from sekai.lib.initialization import LastNote, calculate_note_weight, sort_entities_by_time
 from sekai.lib.layout import init_layout, init_ui_margin
 from sekai.lib.level_config import (
@@ -19,6 +28,7 @@ from sekai.lib.skin import ActiveSkin, init_skin
 from sekai.lib.ui import init_ui
 from sekai.play import custom_elements, input_manager, note, static_stage
 from sekai.play.common import init_play_common
+from sekai.play.connector import Connector, ConnectorSfxManager
 from sekai.play.dynamic_stage import CameraChange
 from sekai.play.events import Fever, Skill
 
@@ -46,6 +56,7 @@ class Initialization(PlayArchetype):
         init_score(note.NOTE_ARCHETYPES)
         init_life(note.NOTE_ARCHETYPES, self.initial_life)
         init_play_common()
+        init_connector_sfx_times()
         init_event_list(self.first_camera_ref)
 
         custom_elements.LifeManager.life = self.initial_life
@@ -53,10 +64,13 @@ class Initialization(PlayArchetype):
         custom_elements.LifeManager.max_life = max(2000, self.initial_life * 2)
 
         sorted_linked_list()
+        if Options.auto_sfx:
+            schedule_auto_connector_sfx()
 
     def initialize(self):
         static_stage.StaticStage.spawn()
         input_manager.InputManager.spawn()
+        ConnectorSfxManager.spawn()
         self.replay_revision = self.revision
 
     def spawn_order(self) -> float:
@@ -111,6 +125,78 @@ def initial_list(entity_count):
             skill_length += 1
 
     return note_head, note_length, skill_head, skill_length
+
+
+def schedule_auto_connector_sfx():
+    entity_count = 0
+    while entity_info_at(entity_count).index == entity_count:
+        entity_count += 1
+    schedule_auto_connector_sfx_kind(entity_count, ConnectorKind.ACTIVE_NORMAL)
+    schedule_auto_connector_sfx_kind(entity_count, ConnectorKind.ACTIVE_CRITICAL)
+
+
+def schedule_auto_connector_sfx_kind(entity_count: int, sfx_kind: ActiveConnectorKind):
+    connector_id = Connector._compile_time_id()
+    current_time = -1e8
+    active_time = CONNECTOR_SFX_ACTIVE_TIME_INIT
+    inactive_time = CONNECTOR_SFX_INACTIVE_TIME_INIT
+    active_connector_index = 0
+
+    while True:
+        next_time = 1e8
+        for i in range(entity_count):
+            info = entity_info_at(i)
+            mro = PlayArchetype._get_mro_id_array(info.archetype_id)
+            if connector_id not in mro:
+                continue
+            connector = Connector.at(i)
+            if connector.active_head_ref.index <= 0:
+                continue
+            if not connector_sfx_matches_kind(connector.segment_head.segment_kind, sfx_kind):
+                continue
+            active_event_time = connector.active_head.target_time
+            inactive_event_time = connector.active_tail.target_time
+            if current_time < active_event_time < next_time:
+                next_time = active_event_time
+            if current_time < inactive_event_time < next_time:
+                next_time = inactive_event_time
+        if next_time == 1e8:
+            break
+        if active_time >= inactive_time and active_connector_index > 0:
+            active_connector = Connector.at(active_connector_index)
+            schedule_connector_sfx(
+                sfx_kind,
+                active_connector.segment_head.timescale_group,
+                current_time,
+                next_time,
+            )
+        for i in range(entity_count):
+            info = entity_info_at(i)
+            mro = PlayArchetype._get_mro_id_array(info.archetype_id)
+            if connector_id not in mro:
+                continue
+            connector = Connector.at(i)
+            if connector.active_head_ref.index <= 0:
+                continue
+            if not connector_sfx_matches_kind(connector.segment_head.segment_kind, sfx_kind):
+                continue
+            if connector.active_head.target_time == next_time:
+                if inactive_time == CONNECTOR_SFX_INACTIVE_TIME_INIT:
+                    inactive_time = next_time
+                active_time = next_time
+                active_connector_index = i
+            if connector.active_tail.target_time == next_time:
+                inactive_time = next_time
+        current_time = next_time
+
+    if active_time >= inactive_time and active_connector_index > 0:
+        active_connector = Connector.at(active_connector_index)
+        schedule_connector_sfx(
+            sfx_kind,
+            active_connector.segment_head.timescale_group,
+            current_time,
+            LastNote.last_time,
+        )
 
 
 def setting_count(head: int, skill: int) -> None:

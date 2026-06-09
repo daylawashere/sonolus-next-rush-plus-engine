@@ -18,12 +18,17 @@ from sekai.lib.connector import (
     CONNECTOR_TRAIL_SPAWN_PERIOD,
     ActiveConnectorInfo,
     ConnectorKind,
+    ConnectorSfxTimes,
     ConnectorVisualState,
+    activate_connector_sfx,
+    critical_connector_sfx_is_active,
+    deactivate_connector_sfx,
     destroy_looped_particle,
     destroy_looped_sfx,
     draw_connector,
     draw_connector_slot_glow_effect,
-    schedule_connector_sfx,
+    inactive_connector_sfx_times,
+    normal_connector_sfx_is_active,
     spawn_connector_slot_particles,
     spawn_linear_connector_trail_particle,
     update_circular_connector_particle,
@@ -72,6 +77,7 @@ class Connector(PlayArchetype):
     last_visual_state: ConnectorVisualState = entity_memory()
     delay: bool = entity_memory()
     can_consume_empty: bool = entity_memory()
+    sfx_active: bool = entity_memory()
 
     @callback(order=1)  # After note preprocessing is done
     def preprocess(self):
@@ -109,39 +115,11 @@ class Connector(PlayArchetype):
             self.end_time += CONNECTOR_THROUGH_JUDGE_LINE_DESPAWN_DELAY
         self.last_visual_state = ConnectorVisualState.WAITING
         self.can_consume_empty = True
+        self.sfx_active = False
         if self.active_head_ref.index > 0:
             head.tick_head_ref = self.active_head_ref
         if self.active_tail_ref.index > 0:
             head.tick_tail_ref = self.active_tail_ref
-
-        if Options.auto_sfx and self.head_ref.index == self.segment_head_ref.index:
-            match self.kind:
-                case (
-                    ConnectorKind.ACTIVE_NORMAL
-                    | ConnectorKind.ACTIVE_CRITICAL
-                    | ConnectorKind.ACTIVE_FAKE_NORMAL
-                    | ConnectorKind.ACTIVE_FAKE_CRITICAL
-                ):
-                    schedule_connector_sfx(
-                        self.kind,
-                        self.segment_head.timescale_group,
-                        self.segment_head.target_time,
-                        self.segment_tail.target_time,
-                    )
-                case (
-                    ConnectorKind.NONE
-                    | ConnectorKind.GUIDE_NEUTRAL
-                    | ConnectorKind.GUIDE_RED
-                    | ConnectorKind.GUIDE_GREEN
-                    | ConnectorKind.GUIDE_BLUE
-                    | ConnectorKind.GUIDE_YELLOW
-                    | ConnectorKind.GUIDE_PURPLE
-                    | ConnectorKind.GUIDE_CYAN
-                    | ConnectorKind.GUIDE_BLACK
-                ):
-                    pass
-                case _:
-                    assert_never(self.kind)
 
     def initialize(self):
         if self.head_ref.index == self.active_head_ref.index:
@@ -164,6 +142,7 @@ class Connector(PlayArchetype):
         current_time = time()
 
         if current_time >= self.end_time:
+            self.deactivate_sfx_if_needed(offset_adjusted_time())
             self.despawn = True
             return
 
@@ -172,7 +151,10 @@ class Connector(PlayArchetype):
         update_timescale_group(self.segment_head.timescale_group)
 
         if self.active_head_ref.index > 0:
-            if current_time in self.input_active_interval:
+            tail_processed = self.active_tail_ref.index > 0 and self.active_tail.is_despawned
+            if tail_processed:
+                self.deactivate_sfx_if_needed(offset_adjusted_time())
+            if not tail_processed and current_time in self.input_active_interval:
                 input_lane, input_size = self.get_attached_params(offset_adjusted_time())
                 head = self.head
                 tail = self.tail
@@ -196,6 +178,8 @@ class Connector(PlayArchetype):
                 bounds = self.active_connector_info.input_bounds
                 for touch in touches():
                     if not touch.ended and bounds.contains_point(touch.position):
+                        if not Options.auto_sfx:
+                            self.activate_sfx_if_needed(oat)
                         if not self.active_connector_info.is_active:
                             self.active_connector_info.active_start_time = current_time
                         self.active_connector_info.is_active = True
@@ -203,10 +187,14 @@ class Connector(PlayArchetype):
                         break
                 else:
                     if self.delay:
+                        if not Options.auto_sfx:
+                            self.deactivate_sfx_if_needed(oat)
                         self.active_connector_info.is_active = False
                         self.can_consume_empty = True
                     else:
                         self.delay = True
+            elif not Options.auto_sfx:
+                self.deactivate_sfx_if_needed(offset_adjusted_time())
             if current_time in self.visual_active_interval:
                 visual_lane, visual_size = self.get_attached_params(current_time)
                 head = self.head
@@ -222,6 +210,7 @@ class Connector(PlayArchetype):
                 )
                 self.active_connector_info.connector_kind = self.kind
             if group_hide_notes(self.segment_head.timescale_group) and self.active_head_ref.index > 0:
+                self.deactivate_sfx_if_needed(offset_adjusted_time())
                 self.active_connector_info.connector_kind = ConnectorKind.NONE
 
     @callback(order=1)
@@ -327,6 +316,81 @@ class Connector(PlayArchetype):
         if Options.show_hitboxes and self.active_head_ref.index > 0 and time() in self.input_active_interval:
             draw_hitbox_bounds_overlay(self.active_connector_info.input_bounds, 0.6)
 
+    def activate_sfx_if_needed(self, event_time: float):
+        if self.sfx_active:
+            return
+        match self.kind:
+            case (
+                ConnectorKind.ACTIVE_NORMAL
+                | ConnectorKind.ACTIVE_CRITICAL
+                | ConnectorKind.ACTIVE_FAKE_NORMAL
+                | ConnectorKind.ACTIVE_FAKE_CRITICAL
+            ):
+                times = activate_connector_sfx(
+                    self.kind,
+                    event_time,
+                    self.active_head.target_time,
+                    self.active_tail.target_time,
+                )
+                self.write_sfx_times(times.active_time, times)
+                self.sfx_active = True
+            case (
+                ConnectorKind.NONE
+                | ConnectorKind.GUIDE_NEUTRAL
+                | ConnectorKind.GUIDE_RED
+                | ConnectorKind.GUIDE_GREEN
+                | ConnectorKind.GUIDE_BLUE
+                | ConnectorKind.GUIDE_YELLOW
+                | ConnectorKind.GUIDE_PURPLE
+                | ConnectorKind.GUIDE_CYAN
+                | ConnectorKind.GUIDE_BLACK
+            ):
+                pass
+            case _:
+                assert_never(self.kind)
+
+    def deactivate_sfx_if_needed(self, event_time: float):
+        if not self.sfx_active or self.active_head_ref.index <= 0 or self.active_tail_ref.index <= 0:
+            return
+        match self.kind:
+            case (
+                ConnectorKind.ACTIVE_NORMAL
+                | ConnectorKind.ACTIVE_CRITICAL
+                | ConnectorKind.ACTIVE_FAKE_NORMAL
+                | ConnectorKind.ACTIVE_FAKE_CRITICAL
+            ):
+                times = deactivate_connector_sfx(
+                    self.kind,
+                    event_time,
+                    self.active_head.target_time,
+                    self.active_tail.target_time,
+                )
+                self.write_sfx_times(times.inactive_time, times)
+                self.sfx_active = False
+            case (
+                ConnectorKind.NONE
+                | ConnectorKind.GUIDE_NEUTRAL
+                | ConnectorKind.GUIDE_RED
+                | ConnectorKind.GUIDE_GREEN
+                | ConnectorKind.GUIDE_BLUE
+                | ConnectorKind.GUIDE_YELLOW
+                | ConnectorKind.GUIDE_PURPLE
+                | ConnectorKind.GUIDE_CYAN
+                | ConnectorKind.GUIDE_BLACK
+            ):
+                pass
+            case _:
+                assert_never(self.kind)
+
+    def write_sfx_times(self, event_time: float, times: ConnectorSfxTimes):
+        match self.kind:
+            case ConnectorKind.ACTIVE_NORMAL | ConnectorKind.ACTIVE_FAKE_NORMAL:
+                Streams.connector_normal_sfx_times[0][event_time] = times
+            case ConnectorKind.ACTIVE_CRITICAL | ConnectorKind.ACTIVE_FAKE_CRITICAL:
+                Streams.connector_critical_sfx_times[0][event_time] = times
+            case _:
+                pass
+
     def get_attached_params(self, target_time: float) -> tuple[float, float]:
         head = self.head_ref.get().effective_attach_head
         tail = self.tail_ref.get().effective_attach_tail
@@ -386,7 +450,6 @@ class SlideManager(PlayArchetype):
     last_kind: ConnectorKind = entity_memory()
     circular_particle: ParticleHandle = entity_memory()
     linear_particle: ParticleHandle = entity_memory()
-    sfx: LoopedEffectHandle = entity_memory()
     next_trail_spawn_time: float = entity_memory()
     next_slot_spawn_time: float = entity_memory()
     last_effect_kind: ConnectorKind = entity_memory()
@@ -405,7 +468,6 @@ class SlideManager(PlayArchetype):
         if current_time >= self.active_tail.target_time or self.active_tail.is_despawned:
             destroy_looped_particle(self.circular_particle)
             destroy_looped_particle(self.linear_particle)
-            destroy_looped_sfx(self.sfx)
             connector_effect_kind_stream[adj_time] = ConnectorKind.NONE
             self.last_effect_kind = ConnectorKind.NONE
             self.despawn = True
@@ -436,7 +498,6 @@ class SlideManager(PlayArchetype):
                     replace,
                     info.visual_y_offset,
                 )
-                update_connector_sfx(self.sfx, info.connector_kind, replace)
                 if self.last_effect_kind != info.connector_kind:
                     connector_effect_kind_stream[adj_time] = info.connector_kind
                     self.last_effect_kind = info.connector_kind
@@ -464,7 +525,6 @@ class SlideManager(PlayArchetype):
                     info.visual_y_offset,
                 )
             case _:
-                destroy_looped_sfx(self.sfx)
                 destroy_looped_particle(self.circular_particle)
                 destroy_looped_particle(self.linear_particle)
                 if self.last_effect_kind != ConnectorKind.NONE:
@@ -497,7 +557,29 @@ class SlideManager(PlayArchetype):
         return self.active_tail_ref.get()
 
 
+class ConnectorSfxManager(PlayArchetype):
+    name = archetype_names.CONNECTOR_SFX_MANAGER
+
+    normal_sfx: LoopedEffectHandle = entity_memory()
+    critical_sfx: LoopedEffectHandle = entity_memory()
+
+    def initialize(self):
+        Streams.connector_normal_sfx_times[0][-2] = inactive_connector_sfx_times()
+        Streams.connector_critical_sfx_times[0][-2] = inactive_connector_sfx_times()
+
+    def update_parallel(self):
+        if normal_connector_sfx_is_active():
+            update_connector_sfx(self.normal_sfx, ConnectorKind.ACTIVE_NORMAL, False)
+        else:
+            destroy_looped_sfx(self.normal_sfx)
+        if critical_connector_sfx_is_active():
+            update_connector_sfx(self.critical_sfx, ConnectorKind.ACTIVE_CRITICAL, False)
+        else:
+            destroy_looped_sfx(self.critical_sfx)
+
+
 CONNECTOR_ARCHETYPES = (
     Connector,
     SlideManager,
+    ConnectorSfxManager,
 )

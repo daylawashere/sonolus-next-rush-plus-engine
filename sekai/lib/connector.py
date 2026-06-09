@@ -4,6 +4,7 @@ from typing import Literal, assert_never
 
 from sonolus.script.archetype import EntityRef
 from sonolus.script.effect import Effect, LoopedEffectHandle
+from sonolus.script.globals import level_memory
 from sonolus.script.interval import clamp, lerp, remap_clamped, unlerp_clamped
 from sonolus.script.particle import Particle, ParticleHandle
 from sonolus.script.quad import Quad, QuadLike
@@ -97,6 +98,23 @@ class ConnectorVisualState(IntEnum):
     WAITING = 0
     INACTIVE = 1
     ACTIVE = 2
+
+
+CONNECTOR_SFX_ACTIVE_TIME_INIT = -1e8
+CONNECTOR_SFX_INACTIVE_TIME_INIT = 1e8
+
+
+class ConnectorSfxTimes(Record):
+    active_time: float
+    inactive_time: float
+
+
+@level_memory
+class ConnectorSfxState:
+    normal_active_time: float
+    normal_inactive_time: float
+    critical_active_time: float
+    critical_inactive_time: float
 
 
 def get_active_connector_sprites(kind: ActiveConnectorKind) -> ActiveConnectorSpriteSet:
@@ -504,6 +522,90 @@ class ActiveConnectorInfo(Record):
     connector_kind: ConnectorKind
 
 
+def inactive_connector_sfx_times() -> ConnectorSfxTimes:
+    return ConnectorSfxTimes(
+        active_time=CONNECTOR_SFX_ACTIVE_TIME_INIT,
+        inactive_time=CONNECTOR_SFX_INACTIVE_TIME_INIT,
+    )
+
+
+def init_connector_sfx_times():
+    ConnectorSfxState.normal_active_time = CONNECTOR_SFX_ACTIVE_TIME_INIT
+    ConnectorSfxState.normal_inactive_time = CONNECTOR_SFX_INACTIVE_TIME_INIT
+    ConnectorSfxState.critical_active_time = CONNECTOR_SFX_ACTIVE_TIME_INIT
+    ConnectorSfxState.critical_inactive_time = CONNECTOR_SFX_INACTIVE_TIME_INIT
+
+
+def activate_connector_sfx(
+    kind: ActiveConnectorKind,
+    event_time: float,
+    active_head_target_time: float,
+    active_tail_target_time: float,
+) -> ConnectorSfxTimes:
+    sfx_time = clamp(event_time, active_head_target_time, active_tail_target_time)
+    result = +ConnectorSfxTimes
+    match kind:
+        case ConnectorKind.ACTIVE_NORMAL | ConnectorKind.ACTIVE_FAKE_NORMAL:
+            if ConnectorSfxState.normal_inactive_time == CONNECTOR_SFX_INACTIVE_TIME_INIT:
+                ConnectorSfxState.normal_inactive_time = sfx_time
+            ConnectorSfxState.normal_active_time = sfx_time
+            result.active_time = ConnectorSfxState.normal_active_time
+            result.inactive_time = ConnectorSfxState.normal_inactive_time
+        case ConnectorKind.ACTIVE_CRITICAL | ConnectorKind.ACTIVE_FAKE_CRITICAL:
+            if ConnectorSfxState.critical_inactive_time == CONNECTOR_SFX_INACTIVE_TIME_INIT:
+                ConnectorSfxState.critical_inactive_time = sfx_time
+            ConnectorSfxState.critical_active_time = sfx_time
+            result.active_time = ConnectorSfxState.critical_active_time
+            result.inactive_time = ConnectorSfxState.critical_inactive_time
+        case _:
+            assert_never(kind)
+    return result
+
+
+def deactivate_connector_sfx(
+    kind: ActiveConnectorKind,
+    event_time: float,
+    active_head_target_time: float,
+    active_tail_target_time: float,
+) -> ConnectorSfxTimes:
+    sfx_time = clamp(event_time, active_head_target_time, active_tail_target_time)
+    result = +ConnectorSfxTimes
+    match kind:
+        case ConnectorKind.ACTIVE_NORMAL | ConnectorKind.ACTIVE_FAKE_NORMAL:
+            ConnectorSfxState.normal_inactive_time = sfx_time
+            result.active_time = ConnectorSfxState.normal_active_time
+            result.inactive_time = ConnectorSfxState.normal_inactive_time
+        case ConnectorKind.ACTIVE_CRITICAL | ConnectorKind.ACTIVE_FAKE_CRITICAL:
+            ConnectorSfxState.critical_inactive_time = sfx_time
+            result.active_time = ConnectorSfxState.critical_active_time
+            result.inactive_time = ConnectorSfxState.critical_inactive_time
+        case _:
+            assert_never(kind)
+    return result
+
+
+def connector_sfx_is_active(times: ConnectorSfxTimes) -> bool:
+    return times.active_time >= times.inactive_time
+
+
+def connector_sfx_matches_kind(kind: ConnectorKind, sfx_kind: ActiveConnectorKind) -> bool:
+    match sfx_kind:
+        case ConnectorKind.ACTIVE_NORMAL | ConnectorKind.ACTIVE_FAKE_NORMAL:
+            return kind in {ConnectorKind.ACTIVE_NORMAL, ConnectorKind.ACTIVE_FAKE_NORMAL}
+        case ConnectorKind.ACTIVE_CRITICAL | ConnectorKind.ACTIVE_FAKE_CRITICAL:
+            return kind in {ConnectorKind.ACTIVE_CRITICAL, ConnectorKind.ACTIVE_FAKE_CRITICAL}
+        case _:
+            assert_never(sfx_kind)
+
+
+def normal_connector_sfx_is_active() -> bool:
+    return ConnectorSfxState.normal_active_time >= ConnectorSfxState.normal_inactive_time
+
+
+def critical_connector_sfx_is_active() -> bool:
+    return ConnectorSfxState.critical_active_time >= ConnectorSfxState.critical_inactive_time
+
+
 def update_circular_connector_particle(
     handle: ParticleHandle,
     kind: ActiveConnectorKind,
@@ -677,6 +779,26 @@ def schedule_connector_sfx(
         hide = group.hide_notes
     if not hide and end_time > last_start_time:
         schedule_looped_sfx(effect, last_start_time, end_time)
+
+
+def schedule_connector_sfx_between(
+    kind: ActiveConnectorKind,
+    start_time: float,
+    end_time: float,
+):
+    if not Options.sfx_enabled:
+        return
+    if end_time <= start_time:
+        return
+    effect = +Effect
+    match kind:
+        case ConnectorKind.ACTIVE_NORMAL | ConnectorKind.ACTIVE_FAKE_NORMAL:
+            effect @= Effects.normal_hold
+        case ConnectorKind.ACTIVE_CRITICAL | ConnectorKind.ACTIVE_FAKE_CRITICAL:
+            effect @= Effects.critical_hold
+        case _:
+            assert_never(kind)
+    schedule_looped_sfx(effect, start_time, end_time)
 
 
 def replace_looped_particle(handle: ParticleHandle, particle: Particle, layout: QuadLike, duration: float):

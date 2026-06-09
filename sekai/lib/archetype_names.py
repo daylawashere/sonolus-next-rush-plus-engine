@@ -18,6 +18,7 @@ PARTICLE_MANAGER = "ParticleManager"
 SIM_LINE = "SimLine"
 CONNECTOR = "Connector"
 SLIDE_MANAGER = "SlideManager"
+CONNECTOR_SFX_MANAGER = "ConnectorSfxManager"
 SLOT_GLOW_EFFECT = "SlotGlowEffect"
 SLOT_EFFECT = "SlotEffect"
 

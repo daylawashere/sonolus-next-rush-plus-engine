@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import assert_never
-
 from sonolus.script.archetype import EntityRef, WatchArchetype, callback, entity_data, entity_memory, imported
 from sonolus.script.interval import Interval, lerp, remap_clamped, unlerp_clamped
 from sonolus.script.particle import ParticleHandle
@@ -20,7 +18,6 @@ from sekai.lib.connector import (
     destroy_looped_particle,
     draw_connector,
     draw_connector_slot_glow_effect,
-    schedule_connector_sfx,
     spawn_connector_slot_particles,
     spawn_linear_connector_trail_particle,
     update_circular_connector_particle,
@@ -97,8 +94,6 @@ class WatchConnector(WatchArchetype):
         if self.head_ref.index == self.active_head_ref.index:
             # This is the first connector, so spawn the WatchSlideManager.
             WatchSlideManager.spawn(active_head_ref=self.active_head_ref, active_tail_ref=self.active_tail_ref)
-
-        self.schedule_sfx()
 
     def spawn_time(self) -> float:
         if DISABLE_NOTES:
@@ -237,69 +232,6 @@ class WatchConnector(WatchArchetype):
             tail_target_time=tail.target_time,
             target_time=target_time,
         )
-
-    def schedule_sfx(self):
-        if is_replay() and not Options.auto_sfx:
-            if self.head_ref.index == self.active_head_ref.index:
-                last_sfx_kind = ConnectorKind.NONE
-                last_time = -1e8
-                for next_time, next_sfx_kind in Streams.connector_effect_kinds[
-                    self.active_head_ref.index
-                ].iter_items_from(-2):
-                    match last_sfx_kind:
-                        case (
-                            ConnectorKind.ACTIVE_NORMAL
-                            | ConnectorKind.ACTIVE_CRITICAL
-                            | ConnectorKind.ACTIVE_FAKE_NORMAL
-                            | ConnectorKind.ACTIVE_FAKE_CRITICAL
-                        ):
-                            schedule_connector_sfx(
-                                last_sfx_kind, self.segment_head.timescale_group, last_time, next_time
-                            )
-                        case (
-                            ConnectorKind.NONE
-                            | ConnectorKind.GUIDE_NEUTRAL
-                            | ConnectorKind.GUIDE_RED
-                            | ConnectorKind.GUIDE_GREEN
-                            | ConnectorKind.GUIDE_BLUE
-                            | ConnectorKind.GUIDE_YELLOW
-                            | ConnectorKind.GUIDE_PURPLE
-                            | ConnectorKind.GUIDE_CYAN
-                            | ConnectorKind.GUIDE_BLACK
-                        ):
-                            pass
-                        case _:
-                            assert_never(last_sfx_kind)
-                    last_sfx_kind = next_sfx_kind
-                    last_time = next_time
-        elif self.head_ref.index == self.segment_head_ref.index:
-            match self.kind:
-                case (
-                    ConnectorKind.ACTIVE_NORMAL
-                    | ConnectorKind.ACTIVE_CRITICAL
-                    | ConnectorKind.ACTIVE_FAKE_NORMAL
-                    | ConnectorKind.ACTIVE_FAKE_CRITICAL
-                ):
-                    schedule_connector_sfx(
-                        self.kind,
-                        self.segment_head.timescale_group,
-                        self.segment_head.target_time,
-                        self.segment_tail.target_time,
-                    )
-                case (
-                    ConnectorKind.NONE
-                    | ConnectorKind.GUIDE_NEUTRAL
-                    | ConnectorKind.GUIDE_RED
-                    | ConnectorKind.GUIDE_GREEN
-                    | ConnectorKind.GUIDE_BLUE
-                    | ConnectorKind.GUIDE_YELLOW
-                    | ConnectorKind.GUIDE_PURPLE
-                    | ConnectorKind.GUIDE_CYAN
-                    | ConnectorKind.GUIDE_BLACK
-                ):
-                    pass
-                case _:
-                    assert_never(self.kind)
 
     @property
     def head(self):
