@@ -481,7 +481,8 @@ def draw_sekai_stage(z_stage, alpha):
 def draw_sekai_divided_stage(z_stage_lane, z_stage_cover, alpha):
     layout = layout_sekai_stage()
     ActiveSkin.sekai_stage_lane.draw(layout, z=z_stage_lane, a=alpha)
-    ActiveSkin.sekai_stage_cover.draw(layout, z=z_stage_cover, a=Options.lane_alpha * alpha)
+    if Options.lane_alpha > 0:
+        ActiveSkin.sekai_stage_cover.draw(layout, z=z_stage_cover, a=Options.lane_alpha * alpha)
 
 
 def get_judgment_sprites(judge_line_color: JudgeLineColor) -> JudgmentSpriteSet:
