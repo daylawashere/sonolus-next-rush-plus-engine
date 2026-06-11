@@ -408,9 +408,22 @@ class Options:
         max=250,
         step=0.05,
     )
+    default_bg_zoom: float = slider_option(
+        name="Default BG Zoom",
+        scope="DaylaRush+",
+        default=1,
+        min=0,
+        max=2,
+        step=0.05
+    )
     force_dynamic_stage: bool = toggle_option(
         name="Force Dynamic Stage",
         description="Allows the option below to be used.",
+        scope="DaylaRush+",
+        default=False,
+    )
+    disable_auto_bg_zoom: bool = toggle_option(
+        name="Disable auto bg zoom",
         scope="DaylaRush+",
         default=False,
     )
