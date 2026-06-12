@@ -455,9 +455,9 @@ def draw_judgment_text(draw_time: float, judgment: Judgment, windows: SekaiWindo
     base_h = 0.09 * ui.combo_config.scale
     base_w = base_h * 27.3
     h, w = transform_fixed_size(base_h, base_w)
-    a = ui.judgment_config.alpha * unlerp_clamped(draw_time, draw_time + 0.064, time())
-    s = unlerp_clamped(draw_time, draw_time + 0.064, time())
-    layout = layout_combo_label(screen_center, w=w * s / 2, h=h * s / 2)
+    p = ease_out_quad(unlerp_clamped(draw_time, draw_time + 0.064, time()))
+    a = ui.judgment_config.alpha * p
+    layout = layout_combo_label(screen_center, w=w * p / 2, h=h * p / 2)
     ActiveSkin.judgment.get_sprite(judgment_type=judgment, windows=windows, accuracy=accuracy).draw(
         quad=layout, z=get_z_alt(LAYER_JUDGMENT), a=a
     )
@@ -482,9 +482,10 @@ def draw_judgment_accuracy(judgment: Judgment, accuracy: float, windows: SekaiWi
     base_h = 0.054 * 1.3 * ui.judgment_config.scale
     base_w = base_h * 23.6
     h, w = transform_fixed_size(base_h, base_w)
-    a = ui.judgment_config.alpha * unlerp_clamped(draw_time, draw_time + 0.064, time())
-    s = unlerp_clamped(draw_time, draw_time + 0.064, time())
-    layout = layout_combo_label(screen_center, w=w * s / 2, h=h * s / 2)   
+    p = ease_out_quad(unlerp_clamped(draw_time, draw_time + 0.064, time()))
+    a = ui.judgment_config.alpha * p
+    
+    layout = layout_combo_label(screen_center, w=w * p / 2, h=h * p / 2)   
     ActiveSkin.accuracy_warning.get_sprite(
         judgment=judgment,
         windows=windows.perfect,
