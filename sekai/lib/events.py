@@ -284,7 +284,7 @@ def draw_skill_bar(draw_time: float, num: int, effect: SkillMode, level: int):
     enter_progress = unlerp_clamped(0, 0.25, draw_time)
     exit_progress = unlerp_clamped(3.75, 4, draw_time)
 
-    anim = ease_out_quad(enter_progress - exit_progress) if time <= 2 else ease_in_quad(enter_progress - exit_progress)
+    anim = ease_out_quad(enter_progress - exit_progress) if draw_time <= 2 else ease_in_quad(enter_progress - exit_progress)
 
     layout = +Quad
     x_ratio = 0

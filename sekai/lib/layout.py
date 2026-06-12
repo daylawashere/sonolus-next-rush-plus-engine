@@ -168,13 +168,6 @@ def init_layout():
     Layout.field_w = field_w
     Layout.field_h = field_h
 
-    bg = background()
-    if is_play() or is_watch():
-        background_zoom = background_rotation_zoom(bg, max_camera_abs_rotation()) if not Options.disable_auto_bg_zoom else (1.0 * Options.default_bg_zoom)
-    else:
-        background_zoom = 1.0 * Options.default_bg_zoom
-    Layout.initial_background = bg.scale_centered(Vec2(background_zoom, background_zoom))
-
     t = Layout.field_h * (0.5 + 1.15875 * (47 / 1176))
     b = Layout.field_h * (0.5 - 1.15875 * (803 / 1176))
     w = Layout.field_w * ((1.15875 * (1420 / 1176)) / TARGET_ASPECT_RATIO / 12)
@@ -216,9 +209,9 @@ def init_layout():
 
     bg = background()
     if is_play() or is_watch():
-        background_zoom = background_camera_zoom(bg)
+        background_zoom = background_camera_zoom(bg) if not Options.disable_auto_bg_zoom else (1.0 * Options.default_bg_zoom)
     else:
-        background_zoom = 1.0
+        background_zoom = 1.0 * Options.default_bg_zoom
     Layout.initial_background = bg.scale_centered(Vec2(background_zoom, background_zoom))
 
     refresh_layout()
