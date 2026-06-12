@@ -144,6 +144,21 @@ class Options:
         step=0.05,
         unit=StandardText.PERCENTAGE_UNIT,
     )
+    sfx_enabled: bool = toggle_option(
+        name=StandardText.EFFECT,
+        scope="Sekai",
+        default=True,
+    )
+    auto_sfx: bool = toggle_option(
+        name=StandardText.EFFECT_AUTO,
+        scope="Sekai",
+        default=False,
+    )
+    prevent_empty_lane_sfx: bool = toggle_option(
+        name="Prevent Empty Lane Effect Overwrite",
+        scope="Rush",
+        default=False,
+    )
     background_alpha: float = slider_option(
         name=StandardText.STAGE_ALPHA,
         scope="Sekai",
@@ -274,21 +289,6 @@ class Options:
         name="UI Intro Effect",
         scope="Rush",
         default=True,
-    )
-    sfx_enabled: bool = toggle_option(
-        name=StandardText.EFFECT,
-        scope="Sekai",
-        default=True,
-    )
-    auto_sfx: bool = toggle_option(
-        name=StandardText.EFFECT_AUTO,
-        scope="Sekai",
-        default=False,
-    )
-    prevent_empty_lane_sfx: bool = toggle_option(
-        name="Prevent Empty Lane Effect Overwrite",
-        scope="Rush",
-        default=False,
     )
     tap_haptics_enabled: bool = toggle_option(
         name=StandardText.HAPTIC,
