@@ -242,7 +242,7 @@ class JudgmentAccuracy(PlayArchetype):
             self.despawn = True
             return
         draw_judgment_accuracy(
-            judgment=self.judgment, accuracy=self.accuracy, windows=self.windows, wrong_way=self.wrong_way
+            judgment=self.judgment, accuracy=self.accuracy, windows=self.windows, wrong_way=self.wrong_way, draw_time=self.spawn_time,
         )
 
     @callback(order=3)

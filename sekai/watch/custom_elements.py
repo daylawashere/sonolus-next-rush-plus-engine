@@ -103,6 +103,7 @@ class JudgmentAccuracy(WatchArchetype):
             windows=current_note.judgment_window,
             accuracy=current_note.accuracy,
             wrong_way=current_note.wrong_way_check,
+            draw_time=self.spawn_time(),
         )
 
 

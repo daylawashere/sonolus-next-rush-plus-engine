@@ -463,7 +463,7 @@ def draw_judgment_text(draw_time: float, judgment: Judgment, windows: SekaiWindo
     )
 
 
-def draw_judgment_accuracy(judgment: Judgment, accuracy: float, windows: SekaiWindow, wrong_way: bool):
+def draw_judgment_accuracy(judgment: Judgment, accuracy: float, windows: SekaiWindow, wrong_way: bool, draw_time: float):
     if Options.hide_ui >= 2:
         return
     if not ActiveSkin.accuracy_warning.available:
@@ -482,8 +482,9 @@ def draw_judgment_accuracy(judgment: Judgment, accuracy: float, windows: SekaiWi
     base_h = 0.054 * 1.3 * ui.judgment_config.scale
     base_w = base_h * 23.6
     h, w = transform_fixed_size(base_h, base_w)
-    a = ui.judgment_config.alpha
-    layout = layout_combo_label(screen_center, w=w / 2, h=h / 2)
+    a = ui.judgment_config.alpha * unlerp_clamped(draw_time, draw_time + 0.064, time())
+    s = unlerp_clamped(draw_time, draw_time + 0.064, time())
+    layout = layout_combo_label(screen_center, w=w * s / 2, h=h * s / 2)   
     ActiveSkin.accuracy_warning.get_sprite(
         judgment=judgment,
         windows=windows.perfect,
