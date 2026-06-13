@@ -300,7 +300,7 @@ def get_camera_info(target_time: float | None = None, left_limit: bool = False) 
         result @= CameraInfo(
             lane=0.0,
             size=6.0,
-            zoom=1.0 + lerp(0.3,0,Options.default_stage_tilt) if Options.force_dynamic_stage else 0,
+            zoom=1.0 + lerp(0.3,0,Options.default_stage_tilt) if Options.force_dynamic_stage else 1,
             zoom_target_lane=0.0,
             zoom_target=Vec2(0.0, 0.0),
             zoom_anchor=Vec2(0.0, 0.0),
