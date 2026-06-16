@@ -447,6 +447,16 @@ class Options:
         standard=True,
         advanced=True,
     )
+    default_camera_zoom: float = slider_option(
+        name="Default Camera Zoom",
+        scope="DaylaRush+",
+        default=1,
+        min=0,
+        max=2,
+        step=0.05,
+        standard=True,
+        advanced=True,
+    )
     flick_mod: FlickMod = select_option(
         name="Flick Mod",
         scope="Next Sekai Arc",
