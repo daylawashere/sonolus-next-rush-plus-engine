@@ -1125,7 +1125,7 @@ def layout_fallback_judge_line() -> Quad:
     return perspective_rect(l=-6, r=6, t=1 - nh, b=1 + nh)
 
 
-def layout_note_body_by_edges(l: float, r: float, h: float, travel: float, not_sekai_p: bool = False):
+def layout_note_body_by_edges(l: float, r: float, h: float, travel: float):
     match Options.note_perspective:
         case 1:
             p = (travel* Options.perspective_mult)**1.31
