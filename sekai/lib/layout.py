@@ -209,7 +209,7 @@ def init_layout():
 
     bg = background()
     if is_play() or is_watch():
-        background_zoom = background_camera_zoom(bg) if not Options.disable_auto_bg_zoom else (1.0 * Options.default_bg_zoom)
+        background_zoom = (background_camera_zoom(bg) if not Options.disable_auto_bg_zoom else 1.0) * Options.default_bg_zoom
     else:
         background_zoom = 1.0 * Options.default_bg_zoom
     Layout.initial_background = bg.scale_centered(Vec2(background_zoom, background_zoom))
@@ -258,8 +258,10 @@ def _initialization_archetype() -> type[InitializationLike]:
 def max_camera_abs_rotation() -> float:
     result = 0.0
     first_camera_ref = _initialization_archetype().at(0).first_camera_ref
-    if first_camera_ref.index <= 0:
+    if not Options.force_dynamic_stage and first_camera_ref.index <= 0 :
         return result
+    elif Options.force_dynamic_stage:
+        return abs(Options.default_camera_rotation)
     camera_archetype = _camera_change_archetype()
     ref = +first_camera_ref
     while ref.index > 0:
@@ -271,7 +273,7 @@ def max_camera_abs_rotation() -> float:
 
 def background_camera_zoom(bg: QuadLike) -> float:
     first_camera_ref = _initialization_archetype().at(0).first_camera_ref
-    if first_camera_ref.index <= 0:
+    if not Options.force_dynamic_stage and first_camera_ref.index <= 0 :
         return 1.0
     a = aspect_ratio()
     b = 1.0
