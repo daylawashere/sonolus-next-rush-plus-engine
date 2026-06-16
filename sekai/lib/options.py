@@ -428,7 +428,7 @@ class Options:
         default=False,
     )
     default_stage_tilt: float = slider_option(
-        name="Stage Tilt Mult",
+        name="Default Stage Tilt",
         scope="DaylaRush+",
         default=1,
         min=0,
