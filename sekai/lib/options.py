@@ -437,6 +437,16 @@ class Options:
         standard=True,
         advanced=True,
     )
+    default_camera_rotation: float = slider_option(
+        name="Default Camera Rotation",
+        scope="DaylaRush+",
+        default=0,
+        min=-360,
+        max=360,
+        step=0.5,
+        standard=True,
+        advanced=True,
+    )
     flick_mod: FlickMod = select_option(
         name="Flick Mod",
         scope="Next Sekai Arc",
