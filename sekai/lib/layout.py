@@ -297,17 +297,18 @@ def get_camera_info(target_time: float | None = None, left_limit: bool = False) 
     result = +CameraInfo
     first_camera_ref = _initialization_archetype().at(0).first_camera_ref
     default_rotate = Options.default_camera_rotation * pi / 180 if Options.force_dynamic_stage else 0
-    default_zoom = Options.default_camera_zoom if Options.force_dynamic_stage else 0
+    default_zoom = 1 - Options.default_camera_zoom if Options.force_dynamic_stage else 0
+    default_tilt = Options.default_stage_tilt if Options.force_dynamic_stage else 1
     if first_camera_ref.index <= 0:
         result @= CameraInfo(
             lane=0.0,
             size=6.0,
-            zoom=1.0 * default_zoom,
+            zoom=1.0 + default_zoom,
             zoom_target_lane=0.0,
             zoom_target=Vec2(0.0, 0.0),
             zoom_anchor=Vec2(0.0, 0.0),
             rotate=default_rotate,
-            stage_tilt=1.0 * (Options.default_stage_tilt if Options.force_dynamic_stage else 1),
+            stage_tilt=default_tilt,
         )
         return result
     t = time() if target_time is None else target_time
@@ -346,20 +347,20 @@ def get_camera_info(target_time: float | None = None, left_limit: bool = False) 
                     zoom_target=Vec2(lerp(ta.x, tb.x, p), lerp(ta.y, tb.y, p)),
                     zoom_anchor=Vec2(lerp(aa.x, ab.x, p), lerp(aa.y, ab.y, p)),
                     rotate=lerp(camera_a.rotate, camera_b.rotate, p) + default_rotate,
-                    stage_tilt=lerp(camera_a.stage_tilt, camera_b.stage_tilt, p),
+                    stage_tilt=lerp(camera_a.stage_tilt, camera_b.stage_tilt, p) * default_tilt,
                 )
                 return result
         result @= CameraInfo(
             lane=camera_a.lane,
             size=camera_a.size,
-            zoom=camera_a.zoom * default_zoom,
+            zoom=camera_a.zoom + default_zoom,
             zoom_target_lane=camera_a.zoom_target_lane,
             zoom_target=camera_zoom_target_at(
                 camera_a.lane, camera_a.size, camera_a.zoom_target_lane, camera_a.zoom_target_y, camera_a.stage_tilt
             ),
             zoom_anchor=camera_zoom_anchor(camera_a.zoom_vertical_align),
             rotate=camera_a.rotate + default_rotate,
-            stage_tilt=camera_a.stage_tilt,
+            stage_tilt=camera_a.stage_tilt * default_tilt,
         )
         return result
     if camera_b_ref.index > 0:
@@ -367,14 +368,14 @@ def get_camera_info(target_time: float | None = None, left_limit: bool = False) 
         result @= CameraInfo(
             lane=camera_b.lane,
             size=camera_b.size,
-            zoom=camera_b.zoom * default_zoom,
+            zoom=camera_b.zoom + default_zoom,
             zoom_target_lane=camera_b.zoom_target_lane,
             zoom_target=camera_zoom_target_at(
                 camera_b.lane, camera_b.size, camera_b.zoom_target_lane, camera_b.zoom_target_y, camera_b.stage_tilt
             ),
             zoom_anchor=camera_zoom_anchor(camera_b.zoom_vertical_align),
             rotate=camera_b.rotate + default_rotate,
-            stage_tilt=camera_b.stage_tilt,
+            stage_tilt=camera_b.stage_tilt * default_tilt,
         )
         return result
     result @= CameraInfo(
