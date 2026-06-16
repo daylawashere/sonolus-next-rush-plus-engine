@@ -300,12 +300,12 @@ def get_camera_info(target_time: float | None = None, left_limit: bool = False) 
         result @= CameraInfo(
             lane=0.0,
             size=6.0,
-            zoom=1.0 + lerp(0.3,0,Options.default_stage_tilt) if Options.force_dynamic_stage else 1,
+            zoom=1.0,
             zoom_target_lane=0.0,
             zoom_target=Vec2(0.0, 0.0),
             zoom_anchor=Vec2(0.0, 0.0),
             rotate=0.0,
-            stage_tilt=1.0,
+            stage_tilt=1.0 * (Options.default_stage_tilt if Options.force_dynamic_stage else 1),
         )
         return result
     t = time() if target_time is None else target_time
@@ -491,7 +491,7 @@ def apply_camera_zoom(transform: LayoutTransform, zoom: float, target: Vec2, anc
 
 def current_stage_tilt() -> float:
     if is_play() or is_watch():
-        return DynamicLayout.stage_tilt * Options.default_stage_tilt
+        return DynamicLayout.stage_tilt * (Options.default_stage_tilt if Options.force_dynamic_stage else 1)
     return 1.0
 
 
@@ -1656,7 +1656,7 @@ def layout_transform_at_camera(camera: CameraInfo) -> LayoutTransform:
 def compute_hitbox(
     transform: LayoutTransform, lane: float, size: float, leniency: float, y_offset: float = 0.0
 ) -> Hitbox:
-    tilt = transform.stage_tilt * (Options.default_stage_tilt if Options.force_dynamic_stage else 1)
+    tilt = transform.stage_tilt
     travel = approach_at_tilt(1 - y_offset, tilt)
     width_factor = width_factor_at_tilt(travel, tilt)
     l_x = (lane - size) * width_factor * transform.w_scale + transform.x_translate
