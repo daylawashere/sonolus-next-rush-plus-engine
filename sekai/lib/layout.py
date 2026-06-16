@@ -296,7 +296,7 @@ def background_camera_zoom(bg: QuadLike) -> float:
 def get_camera_info(target_time: float | None = None, left_limit: bool = False) -> CameraInfo:
     result = +CameraInfo
     first_camera_ref = _initialization_archetype().at(0).first_camera_ref
-    default_rotate = Options.default_camera_rotation * pi / 180
+    default_rotate = Options.default_camera_rotation * pi / 180 if Options.force_dynamic_stage else 0
     if first_camera_ref.index <= 0:
         result @= CameraInfo(
             lane=0.0,
@@ -305,7 +305,7 @@ def get_camera_info(target_time: float | None = None, left_limit: bool = False) 
             zoom_target_lane=0.0,
             zoom_target=Vec2(0.0, 0.0),
             zoom_anchor=Vec2(0.0, 0.0),
-            rotate=0.0 + (default_rotate if Options.force_dynamic_stage else 0),
+            rotate=default_rotate,
             stage_tilt=1.0 * (Options.default_stage_tilt if Options.force_dynamic_stage else 1),
         )
         return result
@@ -344,7 +344,7 @@ def get_camera_info(target_time: float | None = None, left_limit: bool = False) 
                     zoom_target_lane=lerp(camera_a.zoom_target_lane, camera_b.zoom_target_lane, p),
                     zoom_target=Vec2(lerp(ta.x, tb.x, p), lerp(ta.y, tb.y, p)),
                     zoom_anchor=Vec2(lerp(aa.x, ab.x, p), lerp(aa.y, ab.y, p)),
-                    rotate=lerp(camera_a.rotate, camera_b.rotate, p) + (default_rotate if Options.force_dynamic_stage else 0),
+                    rotate=lerp(camera_a.rotate, camera_b.rotate, p) + default_rotate,
                     stage_tilt=lerp(camera_a.stage_tilt, camera_b.stage_tilt, p),
                 )
                 return result
@@ -372,7 +372,7 @@ def get_camera_info(target_time: float | None = None, left_limit: bool = False) 
                 camera_b.lane, camera_b.size, camera_b.zoom_target_lane, camera_b.zoom_target_y, camera_b.stage_tilt
             ),
             zoom_anchor=camera_zoom_anchor(camera_b.zoom_vertical_align),
-            rotate=camera_b.rotate + (default_rotate if Options.force_dynamic_stage else 0),
+            rotate=camera_b.rotate + default_rotate,
             stage_tilt=camera_b.stage_tilt,
         )
         return result
