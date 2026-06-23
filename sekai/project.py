@@ -11,8 +11,8 @@ from sekai.tutorial.mode import tutorial_mode
 from sekai.watch.mode import watch_mode
 
 engine = Engine(
-    name="dayla-rush+",
-    title="Dayla RUSH+",
+    name="rush-append",
+    title="RushPlusAPPEND",
     thumbnail="../js/res/thumbnail.png",
     data=EngineData(
         ui=ui_config,
@@ -22,7 +22,7 @@ engine = Engine(
         preview=preview_mode,
         tutorial=tutorial_mode,
     ),
-    description="@l0vel4ce_ on tiktok. https://github.com/daylawashere/sonolus-next-rush-plus-engine"
+    description="https://github.com/daylawashere/sonolus-next-rush-plus-engine"
 )
 
 project = Project(

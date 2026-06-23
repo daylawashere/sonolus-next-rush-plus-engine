@@ -99,7 +99,7 @@ class Options:
     note_match_speed: bool = toggle_option(
         name="Note Match Speed",
         description="Keeps note distance relative to the level speed.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=False,
     )
     note_speed: float = slider_option(
@@ -123,7 +123,7 @@ class Options:
     talent_enabled: bool = toggle_option(
         name="Enable Talent",
         description="Emulates a team power and song scoring system.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=True,
     )
     slide_alpha: float = slider_option(
@@ -200,14 +200,14 @@ class Options:
     )
     lightweight: int = select_option(
         name="Lightweight Slot",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=2,
         values=["Disable", "Enabled", "Auto"],
     )
     lightweight_factor: float = slider_option(
         name="Lightweight Factor",
         description="How much to decrease the opacity of lightweight elements for",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=0.3,
         min=0,
         max=1,
@@ -216,13 +216,13 @@ class Options:
     note_perspective: int = select_option(
         name="Front-facing Perspective",
         description="Uses a front-facing style for note perspective.",
-        scope="DaylaRush",
+        scope="RushAPPEND",
         default=2,
         values=["Disable", "Enabled", "Auto"],
     )
     perspective_mult: float = slider_option(
         name="Front-facing Perspective multiplier",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=1,
         min=0,
         max=1,
@@ -322,12 +322,12 @@ class Options:
     cap_weight_mult: bool = toggle_option(
         name="Limit Weight Multiplier",
         description="Caps out the weight multiplier, for songs with a large amount of notes.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=False,
     )
     note_leniency: float = slider_option(
         name="Note Leniency",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         description="0 for accurate hitboxes, 0.5 for v1 style, 1 for default",
         default=1,
         min=0,
@@ -338,14 +338,14 @@ class Options:
     )
     debug_stuff: int = select_option(
         name="Debug",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=0,
         values=["Disable", "Song Weight", "Unprocessed Weight", "Particle Version"],
     )
     talent: float = slider_option(
         name="Team Power",
         description="Leave at 300 for song weight scoring calculation only.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=300,
         min=1,
         max=9999,
@@ -354,12 +354,12 @@ class Options:
     force_score: bool = toggle_option(
         name="Enable Force Max Score",
         description="Make sure to disable Talent before using.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=False,
     )
     forced_score: float = slider_option(
         name="Forced Max Score",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=1234567,
         min=1,
         max=10000000,
@@ -368,7 +368,7 @@ class Options:
     forced_score_2: float = slider_option(
         name="Forced Max Score 2",
         description="Adds onto Forced Max Score 1 to bypass certain limitations.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=0,
         min=1,
         max=10000000,
@@ -377,7 +377,7 @@ class Options:
     forced_score_3: float = slider_option(
         name="Forced Max Score 3",
         description="Adds onto Forced Max Score 1 and 2 to bypass certain limitations.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=0,
         min=0,
         max=10000000,
@@ -386,7 +386,7 @@ class Options:
     score_mult: float = slider_option(
         name="Score Multiplier",
         description="Multiplies score if Talent/Force Score is enabled",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=1,
         min=0.05,
         max=250,
@@ -395,14 +395,14 @@ class Options:
     enable_gauge_mult: int = select_option(
         name="Match Gauge to Multiplier",
         description="Multiplies gauge levels by score mult option or specific number.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=0,
         values=["Disable", "Score Mult", "Gauge Mult"],
     )
     gauge_mult: float = slider_option(
         name="Gauge Multiplier",
         description="Multiplies score if Gauge Mult is enabled",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=1,
         min=0.05,
         max=250,
@@ -410,7 +410,7 @@ class Options:
     )
     default_bg_zoom: float = slider_option(
         name="Default BG Zoom",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=1,
         min=0,
         max=2,
@@ -419,17 +419,17 @@ class Options:
     force_dynamic_stage: bool = toggle_option(
         name="Force Dynamic Stage",
         description="Allows the option below to be used.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=False,
     )
     disable_auto_bg_zoom: bool = toggle_option(
         name="Disable auto bg zoom",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=False,
     )
     default_stage_tilt: float = slider_option(
         name="Default Stage Tilt",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=1,
         min=0,
         max=1,
@@ -439,7 +439,7 @@ class Options:
     )
     default_camera_rotation: float = slider_option(
         name="Default Camera Rotation",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=0,
         min=-360,
         max=360,
@@ -449,7 +449,7 @@ class Options:
     )
     default_camera_zoom: float = slider_option(
         name="Default Camera Zoom",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=1,
         min=0,
         max=2,
@@ -515,13 +515,13 @@ class Options:
     ui_match_speed: bool = toggle_option(
         name="UI Match Speed",
         description="Keeps UI speed relative to the level speed.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=False,
     )
     effects_match_speed: bool = toggle_option(
         name="Effect Match Speed",
         description="Keeps Effect speed relative to the level speed.",
-        scope="DaylaRush+",
+        scope="RushAPPEND",
         default=False,
     )
     slot_effect_size: float = slider_option(
